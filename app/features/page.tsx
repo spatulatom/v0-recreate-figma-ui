@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 const FeaturesPage = () => {
   return (
     <div className="container mx-auto py-12">
@@ -7,11 +9,15 @@ const FeaturesPage = () => {
         {/* Feature 1 */}
         <div className="flex flex-col items-center">
           <h2 className="text-xl font-semibold mb-4">Customizable Dashboard</h2>
-          <img
-            src="/images/features-customize.png"
-            alt="Customizable Dashboard"
-            className="rounded-lg h-auto w-full shadow-lg"
-          />
+          <div className="relative w-full h-[300px]">
+            <Image
+              src="/images/features-customize.png"
+              alt="Customizable Dashboard"
+              fill
+              className="rounded-lg object-cover shadow-lg"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
           <p className="text-gray-700 mt-4 text-center">
             Tailor your dashboard to see the information that matters most to you.
           </p>
@@ -38,11 +44,15 @@ const FeaturesPage = () => {
         {/* Feature 4 */}
         <div className="flex flex-col items-center">
           <h2 className="text-xl font-semibold mb-4">Advanced Features</h2>
-          <img
-            src="/images/features-customize.png"
-            alt="Advanced Features"
-            className="rounded-lg h-auto w-full shadow-lg"
-          />
+          <div className="relative w-full h-[300px]">
+            <Image
+              src="/images/features-customize.png"
+              alt="Advanced Features"
+              fill
+              className="rounded-lg object-cover shadow-lg"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
           <p className="text-gray-700 mt-4 text-center">
             Unlock the full potential of our platform with advanced features.
           </p>

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react"
 import FeaturesSection from "./features-section"
+import Image from "next/image"
 
 export default function ProjectManagementLanding() {
   return (
@@ -24,11 +25,16 @@ export default function ProjectManagementLanding() {
         </div>
 
         <div className="relative z-10">
-          <img
-            src="/images/project-management-hero.png"
-            alt="Project Management Dashboard"
-            className="rounded-lg h-auto w-full shadow-lg"
-          />
+          <div className="relative z-10 w-full h-[350px] md:h-[400px]">
+            <Image
+              src="/images/project-management-hero.png"
+              alt="Project Management Dashboard"
+              fill
+              className="rounded-lg object-cover shadow-lg"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
+          </div>
         </div>
 
         {/* Background pattern */}
