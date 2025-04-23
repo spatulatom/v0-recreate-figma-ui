@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 export default function AboutPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -27,7 +29,15 @@ export default function AboutPage() {
             benefiting from our approach to streamlined collaboration.
           </p>
         </div>
-        <div className="bg-[#c4defd] rounded-lg h-80 w-full"></div>
+        <div className="relative h-[400px]">
+          <Image
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galeries%20Lafayette%20Building-Se97ENPrtcBHCmCeUu9I64Wf6MMaRL.jpeg"
+            alt="Galeries Lafayette Building"
+            fill
+            className="rounded-lg object-cover shadow-lg"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+        </div>
       </div>
 
       <div className="mb-20">

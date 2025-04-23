@@ -27,8 +27,8 @@ export default function ProjectManagementLanding() {
         <div className="relative z-10">
           <div className="relative z-10 w-full h-[350px] md:h-[400px]">
             <Image
-              src="/images/project-management-hero.png"
-              alt="Project Management Dashboard"
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galeries%20Lafayette%20Building-E3e74ecoAiN9fxJrenuICgqATCqWN7.jpeg"
+              alt="Galeries Lafayette Building"
               fill
               className="rounded-lg object-cover shadow-lg"
               sizes="(max-width: 768px) 100vw, 50vw"
