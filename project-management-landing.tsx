@@ -24,7 +24,11 @@ export default function ProjectManagementLanding() {
         </div>
 
         <div className="relative z-10">
-          <div className="bg-[#c4defd] rounded-lg h-80 w-full"></div>
+          <img
+            src="/images/project-management-hero.png"
+            alt="Project Management Dashboard"
+            className="rounded-lg h-auto w-full shadow-lg"
+          />
         </div>
 
         {/* Background pattern */}
