@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useTheme } from "@/components/theme-provider"
 
 // Component that will re-render when theme changes
@@ -11,7 +11,7 @@ function ThemeAwareComponent() {
   // Increment render count on each render
   useEffect(() => {
     setRenderCount((prev) => prev + 1)
-  }, [])
+  }, [theme])
 
   return (
     <div className="bg-card p-6 rounded-lg shadow-md mb-6">
@@ -33,12 +33,13 @@ function ThemeAwareComponent() {
 
 // Component that will NOT re-render when theme changes
 function ThemeUnawareComponent() {
-  const [renderCount, setRenderCount] = useState(0)
-
-  // Increment render count on each render
+  // Use ref for tracking renders without re-rendering
+  const renderCountRef = useRef(0)
+  
+  // This will run on every render without causing loops
   useEffect(() => {
-    setRenderCount((prev) => prev + 1)
-  }, [])
+    renderCountRef.current += 1
+  })
 
   return (
     <div className="bg-card p-6 rounded-lg shadow-md mb-6">
@@ -49,7 +50,7 @@ function ThemeUnawareComponent() {
       <div className="flex space-x-4 items-center">
         <div className="px-4 py-2 bg-primary text-primary-foreground rounded-md">Uses theme CSS variables</div>
         <div className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md">
-          Render count: <strong>{renderCount}</strong>
+          Render count: <strong>{renderCountRef.current}</strong>
         </div>
       </div>
     </div>
@@ -63,7 +64,7 @@ export default function ThemeRenderingDemo() {
   // Increment render count on each render
   useEffect(() => {
     setRenderCount((prev) => prev + 1)
-  }, [])
+  }, [theme])
 
   return (
     <div className="container mx-auto px-4 py-16">
