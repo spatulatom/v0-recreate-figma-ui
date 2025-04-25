@@ -2,17 +2,17 @@ export default function ContactPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="text-center mb-16">
-        <h1 className="text-4xl font-bold text-[#212529] mb-4">Contact Us</h1>
+        <h1 className="text-4xl font-bold text-foreground mb-4">Contact Us</h1>
         <div className="h-2 w-64 bg-[#ffe492] mx-auto mb-6"></div>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
           Have questions or feedback? We'd love to hear from you. Our team is always ready to help.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
         <div>
-          <h2 className="text-2xl font-bold text-[#212529] mb-6">Get in Touch</h2>
-          <p className="text-gray-600 mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-6">Get in Touch</h2>
+          <p className="text-muted-foreground mb-8">
             Fill out the form and our team will get back to you within 24 hours. We're here to help with any questions
             about our products, services, or anything else you might need.
           </p>
@@ -38,9 +38,9 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-medium text-[#212529]">Phone</h3>
-                <p className="mt-1 text-gray-600">+1 (555) 123-4567</p>
-                <p className="mt-1 text-gray-600">Monday-Friday, 9AM-6PM EST</p>
+                <h3 className="text-lg font-medium text-foreground">Phone</h3>
+                <p className="mt-1 text-muted-foreground">+1 (555) 123-4567</p>
+                <p className="mt-1 text-muted-foreground">Monday-Friday, 9AM-6PM EST</p>
               </div>
             </div>
 
@@ -64,9 +64,9 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-medium text-[#212529]">Email</h3>
-                <p className="mt-1 text-gray-600">info@whitepace.com</p>
-                <p className="mt-1 text-gray-600">support@whitepace.com</p>
+                <h3 className="text-lg font-medium text-foreground">Email</h3>
+                <p className="mt-1 text-muted-foreground">info@whitepace.com</p>
+                <p className="mt-1 text-muted-foreground">support@whitepace.com</p>
               </div>
             </div>
 
@@ -96,16 +96,16 @@ export default function ContactPage() {
                 </div>
               </div>
               <div className="ml-4">
-                <h3 className="text-lg font-medium text-[#212529]">Office</h3>
-                <p className="mt-1 text-gray-600">123 Innovation Street</p>
-                <p className="mt-1 text-gray-600">Tech City, 10001</p>
+                <h3 className="text-lg font-medium text-foreground">Office</h3>
+                <p className="mt-1 text-muted-foreground">123 Innovation Street</p>
+                <p className="mt-1 text-muted-foreground">Tech City, 10001</p>
               </div>
             </div>
           </div>
         </div>
 
         <div>
-          <form className="bg-white p-8 rounded-lg shadow-md">
+          <form className="bg-card p-8 rounded-lg shadow-md border border-border">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -177,36 +177,36 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <div className="bg-gray-50 p-8 rounded-lg">
-        <h2 className="text-2xl font-bold text-[#212529] mb-6 text-center">Frequently Asked Questions</h2>
+      <div className="bg-muted p-8 rounded-lg">
+        <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Frequently Asked Questions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-lg font-medium text-[#212529] mb-2">How do I get started with Whitepace?</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-foreground mb-2">How do I get started with Whitepace?</h3>
+            <p className="text-muted-foreground">
               Getting started is easy! Simply sign up for a free account on our website, and you'll be guided through
               the setup process. You can also book a demo with our team for a personalized onboarding experience.
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-[#212529] mb-2">Is there a free trial available?</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-foreground mb-2">Is there a free trial available?</h3>
+            <p className="text-muted-foreground">
               Yes, we offer a 14-day free trial with full access to all features. No credit card required to get
               started.
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-[#212529] mb-2">What kind of support do you offer?</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-foreground mb-2">What kind of support do you offer?</h3>
+            <p className="text-muted-foreground">
               We provide 24/7 email support for all customers. Premium plans also include priority support and dedicated
               account managers.
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-medium text-[#212529] mb-2">Can I import data from other tools?</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-foreground mb-2">Can I import data from other tools?</h3>
+            <p className="text-muted-foreground">
               Whitepace supports importing data from most popular project management and note-taking tools. Our team can
               also help with custom migrations.
             </p>

@@ -3,22 +3,22 @@ import { Mail, MapPin, Phone } from "lucide-react"
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 pt-16 pb-12">
+    <footer className="bg-background pt-16 pb-12 border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-[#4f9cf9] rounded-md flex items-center justify-center mr-2">
-                <span className="text-white font-bold">W</span>
+              <div className="w-8 h-8 bg-primary rounded-md flex items-center justify-center mr-2">
+                <span className="text-primary-foreground font-bold">W</span>
               </div>
-              <span className="text-xl font-bold text-[#212529]">Whitepace</span>
+              <span className="text-xl font-bold text-foreground">Whitepace</span>
             </div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-muted-foreground mb-4">
               Whitepace is a project management tool designed to improve your team's productivity and organization.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-[#4f9cf9]">
+              <a href="#" className="text-muted-foreground hover:text-primary">
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fillRule="evenodd"
@@ -27,12 +27,12 @@ export default function Footer() {
                   />
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#4f9cf9]">
+              <a href="#" className="text-muted-foreground hover:text-primary">
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
                 </svg>
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#4f9cf9]">
+              <a href="#" className="text-muted-foreground hover:text-primary">
                 <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fillRule="evenodd"
@@ -46,25 +46,25 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Quick Links</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/" className="text-gray-600 hover:text-[#4f9cf9]">
+                <Link href="/" className="text-muted-foreground hover:text-primary">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="/features" className="text-gray-600 hover:text-[#4f9cf9]">
+                <Link href="/features" className="text-muted-foreground hover:text-primary">
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-[#4f9cf9]">
+                <Link href="/about" className="text-muted-foreground hover:text-primary">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 hover:text-[#4f9cf9]">
+                <Link href="/contact" className="text-muted-foreground hover:text-primary">
                   Contact
                 </Link>
               </li>
@@ -73,25 +73,25 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Legal</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#4f9cf9]">
+                <a href="#" className="text-muted-foreground hover:text-primary">
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#4f9cf9]">
+                <a href="#" className="text-muted-foreground hover:text-primary">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#4f9cf9]">
+                <a href="#" className="text-muted-foreground hover:text-primary">
                   Cookie Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#4f9cf9]">
+                <a href="#" className="text-muted-foreground hover:text-primary">
                   GDPR
                 </a>
               </li>
@@ -100,26 +100,26 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Contact Us</h3>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <MapPin className="h-5 w-5 text-[#4f9cf9] mr-2 mt-0.5" />
-                <span className="text-gray-600">123 Innovation Street, Tech City, 10001</span>
+                <MapPin className="h-5 w-5 text-primary mr-2 mt-0.5" />
+                <span className="text-muted-foreground">123 Innovation Street, Tech City, 10001</span>
               </li>
               <li className="flex items-center">
-                <Phone className="h-5 w-5 text-[#4f9cf9] mr-2" />
-                <span className="text-gray-600">+1 (555) 123-4567</span>
+                <Phone className="h-5 w-5 text-primary mr-2" />
+                <span className="text-muted-foreground">+1 (555) 123-4567</span>
               </li>
               <li className="flex items-center">
-                <Mail className="h-5 w-5 text-[#4f9cf9] mr-2" />
-                <span className="text-gray-600">info@whitepace.com</span>
+                <Mail className="h-5 w-5 text-primary mr-2" />
+                <span className="text-muted-foreground">info@whitepace.com</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-center text-gray-500 text-sm">
+        <div className="mt-12 pt-8 border-t border-border/30">
+          <p className="text-center text-muted-foreground text-sm">
             &copy; {new Date().getFullYear()} Whitepace. All rights reserved.
           </p>
         </div>

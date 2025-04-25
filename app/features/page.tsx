@@ -18,13 +18,13 @@ const FeaturesPage = () => {
           </div>
 
           <div>
-            <h2 className="text-4xl font-bold text-[#212529] mb-2">
+            <h2 className="text-4xl font-bold text-foreground mb-2">
               Customise it to
               <br />
               your needs
             </h2>
             <div className="h-2 w-32 bg-[#ffe492] mb-6"></div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Customise the app with plugins, custom themes and multiple text editors (Rich Text or Markdown). Or create
               your own scripts and plugins using the Extension API.
             </p>
@@ -38,14 +38,14 @@ const FeaturesPage = () => {
       {/* Pricing Section */}
       <section className="mb-24">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-[#212529] mb-2">
+          <h2 className="text-4xl font-bold text-foreground mb-2">
             Choose{" "}
             <span className="relative inline-block">
               Your Plan
               <div className="absolute bottom-0 left-0 h-2 w-full bg-[#ffe492]"></div>
             </span>
           </h2>
-          <p className="text-gray-600 max-w-3xl mx-auto mt-6">
+          <p className="text-muted-foreground max-w-3xl mx-auto mt-6">
             Whether you want to get organized, keep your personal life on track, or boost workplace productivity,
             Whitepace has the right plan for you.
           </p>
@@ -53,12 +53,12 @@ const FeaturesPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Free Plan */}
-          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-lg transition-shadow">
+          <div className="border border-border rounded-lg p-8 hover:shadow-lg transition-shadow">
             <h3 className="text-xl font-bold mb-4">Free</h3>
             <div className="mb-6">
               <span className="text-4xl font-bold">$0</span>
             </div>
-            <p className="text-gray-600 mb-6">Capture ideas and find them quickly</p>
+            <p className="text-muted-foreground mb-6">Capture ideas and find them quickly</p>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start">
@@ -93,7 +93,7 @@ const FeaturesPage = () => {
           </div>
 
           {/* Personal Plan */}
-          <div className="bg-[#003366] text-white rounded-lg p-8 shadow-xl transform scale-105">
+          <div className="bg-[#003366] text-white rounded-lg p-8 shadow-xl transform scale-105 dark:border dark:border-white/20">
             <h3 className="text-xl font-bold mb-4">Personal</h3>
             <div className="mb-6">
               <span className="text-4xl font-bold">$11.99</span>
@@ -133,12 +133,12 @@ const FeaturesPage = () => {
           </div>
 
           {/* Organization Plan */}
-          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-lg transition-shadow">
+          <div className="border border-border rounded-lg p-8 hover:shadow-lg transition-shadow">
             <h3 className="text-xl font-bold mb-4">Organization</h3>
             <div className="mb-6">
               <span className="text-4xl font-bold">$49.99</span>
             </div>
-            <p className="text-gray-600 mb-6">Capture ideas and find them quickly</p>
+            <p className="text-muted-foreground mb-6">Capture ideas and find them quickly</p>
 
             <ul className="space-y-4 mb-8">
               <li className="flex items-start">
@@ -178,13 +178,13 @@ const FeaturesPage = () => {
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-4xl font-bold text-[#212529] mb-2">
+            <h2 className="text-4xl font-bold text-foreground mb-2">
               Advanced
               <br />
               collaboration tools
             </h2>
             <div className="h-2 w-32 bg-[#ffe492] mb-6"></div>
-            <p className="text-gray-600 mb-6">
+            <p className="text-muted-foreground mb-6">
               Work together seamlessly with your team with real-time editing, comments, and notifications. Share
               projects with anyone, anywhere.
             </p>
