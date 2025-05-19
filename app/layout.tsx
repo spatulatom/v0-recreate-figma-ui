@@ -21,6 +21,24 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Add this script to prevent theme flashing */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('whitepace-theme');
+                  if (theme === 'dark' || (theme === 'system' && 
+                      window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <ThemeProvider defaultTheme="system" storageKey="whitepace-theme">
           <Navbar />
