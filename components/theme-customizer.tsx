@@ -31,12 +31,12 @@ export function ThemeCustomizer() {
         body: JSON.stringify({ prompt }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const errorData = await response.text()
-        throw new Error(`Failed to generate theme: ${errorData || response.statusText}`)
+        throw new Error(`Failed to generate theme: ${data.details || data.error || response.statusText}`)
       }
 
-      const data = await response.json()
       setGeneratedCSS(data.css || "/* No CSS generated */")
       setIsExample(data.isExample || false)
       setShowPreview(true)
@@ -49,8 +49,29 @@ export function ThemeCustomizer() {
   }
 
   function applyTheme() {
-    // In a real implementation, this would apply the generated CSS
-    alert("Theme applied! In a real implementation, this would update your theme.")
+    try {
+      // Create a style element
+      const styleElement = document.createElement("style")
+      styleElement.textContent = generatedCSS
+
+      // Add an ID to easily find/remove it later
+      styleElement.id = "custom-theme-styles"
+
+      // Remove any existing custom theme styles
+      const existingStyles = document.getElementById("custom-theme-styles")
+      if (existingStyles) {
+        existingStyles.remove()
+      }
+
+      // Add the new styles to the document head
+      document.head.appendChild(styleElement)
+
+      // Alert the user
+      alert("Theme applied! The custom theme has been applied to the page.")
+    } catch (err) {
+      console.error("Error applying theme:", err)
+      alert("Failed to apply theme. See console for details.")
+    }
   }
 
   return (
@@ -70,7 +91,7 @@ export function ThemeCustomizer() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               rows={6}
-              className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-900 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </div>

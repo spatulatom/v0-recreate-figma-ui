@@ -1,36 +1,55 @@
-import { experimental_createMCPClient } from "ai"
-import { openai } from "@ai-sdk/openai"
+import { OpenAI } from "openai"
 
-// Function to create and initialize the MCP client
-export async function createMCPClient() {
-  // Initialize an MCP client to connect to a server
-  const client = await experimental_createMCPClient({
-    transport: {
-      type: "sse",
-      url: process.env.MCP_SERVER_URL || "https://api.zapier.com/v1/mcp/sse",
-    },
-  })
-
-  return client
-}
-
-// Function to generate text using the OpenAI model
-export async function generateWithOpenAI(prompt: string) {
+// Function to generate a theme using OpenAI directly
+export async function generateTheme(prompt: string) {
   try {
-    const { text } = await openai.generateText({
-      model: "gpt-4o",
-      prompt,
+    // Initialize OpenAI client
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
     })
-    return text
-  } catch (error) {
-    console.error("Error generating text:", error)
-    return "Error generating response. Please try again."
-  }
-}
 
-// Helper function to close the MCP client
-export async function closeMCPClient(client: any) {
-  if (client) {
-    await client.close()
+    // Use OpenAI to generate a theme
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are a theme generation assistant. Generate a CSS theme based on the user's description.
+          Use HSL color format for all colors. Include variables for both light and dark themes.
+          Include the following CSS variables:
+          - --background
+          - --foreground
+          - --card
+          - --card-foreground
+          - --primary
+          - --primary-foreground
+          - --secondary
+          - --secondary-foreground
+          - --muted
+          - --muted-foreground
+          - --accent
+          - --accent-foreground
+          - --destructive
+          - --destructive-foreground
+          - --border
+          - --input
+          - --ring
+          
+          Format your response as valid CSS with both :root {} and .dark {} sections.`,
+        },
+        {
+          role: "user",
+          content: `Generate a theme based on this description: ${prompt}`,
+        },
+      ],
+      temperature: 0.7,
+    })
+
+    // Get the generated CSS
+    const generatedCSS = result.choices[0].message.content || "/* No CSS generated */"
+    return generatedCSS
+  } catch (error) {
+    console.error("Error generating theme:", error)
+    throw error
   }
 }
