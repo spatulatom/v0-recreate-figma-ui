@@ -1,11 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Hugging Face API endpoint - using the Inference API
-const HF_API_URL = "https://api-inference.huggingface.co/models/"
+// Hugging Face Inference API endpoint - using the correct URL structure
+const HF_INFERENCE_API = "https://api-inference.huggingface.co/models/"
 
-// Using a very common and publicly available model
-const DEFAULT_MODEL = "gpt2" // Simple text generation model that's widely accessible
-const FALLBACK_MODEL = "distilgpt2" // Even smaller fallback model
+// Using models that are definitely available and don't require special access
+const MODELS = [
+  "facebook/bart-large-cnn", // Summarization model that works well for general text generation
+  "google/flan-t5-small", // Small but effective text generation model
+  "distilbert-base-uncased", // Fallback for simple text tasks
+]
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +21,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { messages } = body
-
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Messages are required and must be an array" }, { status: 400 })
     }
@@ -46,103 +48,124 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = lastMessage.content
-
     console.log("Sending request to Hugging Face API with prompt:", prompt)
-    console.log("Using model:", DEFAULT_MODEL)
 
-    // Try with the default model first
-    let response = await fetch(`${HF_API_URL}${DEFAULT_MODEL}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${hfToken}`,
-      },
-      body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          max_length: 100,
-          temperature: 0.7,
-          return_full_text: false,
-        },
-      }),
-    })
+    // Try each model in sequence until one works
+    let response = null
+    let modelUsed = ""
+    const errorDetails = []
 
-    // If the default model fails, try the fallback model
-    if (!response.ok) {
-      console.log(
-        `Default model ${DEFAULT_MODEL} failed with status ${response.status}. Trying fallback model ${FALLBACK_MODEL}`,
-      )
+    for (const model of MODELS) {
+      try {
+        console.log(`Trying model: ${model}`)
 
-      response = await fetch(`${HF_API_URL}${FALLBACK_MODEL}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${hfToken}`,
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_length: 100,
-            temperature: 0.7,
-            return_full_text: false,
+        // Create AbortController for timeout
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000) // 5-second timeout
+
+        response = await fetch(`${HF_INFERENCE_API}${model}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${hfToken}`,
           },
-        }),
-      })
+          body: JSON.stringify({
+            inputs: prompt,
+            options: {
+              wait_for_model: true,
+              use_cache: true,
+            },
+          }),
+          signal: controller.signal,
+        })
+
+        clearTimeout(timeoutId)
+
+        if (response.ok) {
+          modelUsed = model
+          console.log(`Success with model: ${model}, status: ${response.status}`)
+          break
+        } else {
+          const errorText = await response.text()
+          console.error(`Model ${model} failed with status ${response.status}: ${errorText}`)
+          errorDetails.push(`${model}: ${response.status} - ${errorText}`)
+        }
+      } catch (error) {
+        console.error(`Error with model ${model}:`, error)
+        errorDetails.push(`${model}: ${error instanceof Error ? error.message : "Unknown error"}`)
+      }
     }
 
-    console.log("Hugging Face API response status:", response.status)
-
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Hugging Face API error response:", errorText)
-      console.error("Response headers:", Object.fromEntries([...response.headers.entries()]))
-
+    // If all models failed
+    if (!response || !response.ok) {
+      console.error("All models failed. Error details:", errorDetails)
       return NextResponse.json(
         {
-          error: `Hugging Face API error: ${response.status}`,
-          details: errorText,
+          error: "All Hugging Face models failed",
+          details: errorDetails.join("; "),
           message: {
             role: "assistant",
-            content: `Sorry, I encountered an error while processing your request. Status: ${response.status}. Please try again later.`,
+            content: "Sorry, I couldn't process your request. All available models failed to respond.",
           },
         },
         { status: 500 },
       )
     }
 
-    const result = await response.json()
-    console.log("Hugging Face API result:", JSON.stringify(result))
-
-    // Extract the generated text from the response
-    let generatedText = ""
-
-    // Handle different response formats
-    if (Array.isArray(result) && result.length > 0) {
-      // Format for some models like GPT-2
-      generatedText = result[0]?.generated_text || ""
-    } else if (typeof result === "object" && result.generated_text) {
-      // Format for some other models
-      generatedText = result.generated_text
-    } else if (typeof result === "string") {
-      // Direct string response
-      generatedText = result
-    } else {
-      // Try to extract from any other format
-      generatedText = JSON.stringify(result)
-      console.warn("Unexpected response format:", result)
+    // Parse the successful response
+    let result
+    try {
+      result = await response.json()
+      console.log("Hugging Face API result:", JSON.stringify(result).substring(0, 200) + "...")
+    } catch (error) {
+      console.error("Error parsing response:", error)
+      return NextResponse.json(
+        {
+          error: "Failed to parse response",
+          details: error instanceof Error ? error.message : "Unknown error",
+          message: {
+            role: "assistant",
+            content: "Sorry, I received a response but couldn't parse it properly.",
+          },
+        },
+        { status: 500 },
+      )
     }
 
-    // Return the response
+    // Extract the generated text based on the model used
+    let generatedText = ""
+
+    if (modelUsed.includes("bart")) {
+      // BART models typically return an array with generated_text
+      generatedText =
+        Array.isArray(result) && result[0]?.generated_text
+          ? result[0].generated_text
+          : result?.generated_text || "No response generated"
+    } else if (modelUsed.includes("t5")) {
+      // T5 models typically return an array with generated_text
+      generatedText =
+        Array.isArray(result) && result[0]?.generated_text
+          ? result[0].generated_text
+          : result?.generated_text || "No response generated"
+    } else if (modelUsed.includes("bert")) {
+      // BERT models typically return embeddings or classifications
+      generatedText = "I processed your message, but I'm primarily an understanding model, not a text generation model."
+    } else {
+      // Generic fallback
+      generatedText =
+        typeof result === "string" ? result : result?.generated_text || JSON.stringify(result).substring(0, 500)
+    }
+
+    // Return the response with the model used
     return NextResponse.json({
       message: {
         role: "assistant",
         content: generatedText.trim() || "I processed your request but couldn't generate a proper response.",
       },
+      modelUsed: modelUsed,
     })
   } catch (error) {
     console.error("Hugging Face API error:", error)
-
-    // Ensure we return a valid JSON response even for errors
     return NextResponse.json(
       {
         error: "Failed to get response from Hugging Face",

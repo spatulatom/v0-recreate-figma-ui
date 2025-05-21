@@ -21,8 +21,9 @@ export default function HuggingFaceChatPage() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [modelInfo, setModelInfo] = useState("Using Hugging Face model: gpt2 (with fallback to distilgpt2)")
+  const [modelInfo, setModelInfo] = useState("Using Hugging Face models")
   const [apiStatus, setApiStatus] = useState<"untested" | "working" | "error">("untested")
+  const [currentModel, setCurrentModel] = useState<string | null>(null)
 
   // Check API status on component mount
   useEffect(() => {
@@ -49,6 +50,10 @@ export default function HuggingFaceChatPage() {
           const data = await response.json()
           console.log("API check successful:", data)
           setApiStatus("working")
+          if (data.modelUsed) {
+            setCurrentModel(data.modelUsed)
+            setModelInfo(`Using Hugging Face model: ${data.modelUsed}`)
+          }
         } else {
           setApiStatus("error")
           const errorText = await response.text()
@@ -113,6 +118,12 @@ export default function HuggingFaceChatPage() {
       if (data.message) {
         setMessages([...newMessages, data.message])
         setApiStatus("working")
+
+        // Update model info if available
+        if (data.modelUsed && data.modelUsed !== currentModel) {
+          setCurrentModel(data.modelUsed)
+          setModelInfo(`Using Hugging Face model: ${data.modelUsed}`)
+        }
       } else {
         throw new Error("Response missing message data")
       }
@@ -176,9 +187,8 @@ export default function HuggingFaceChatPage() {
           <div>
             <p className="font-medium">About this demo:</p>
             <p className="text-sm mt-1">
-              This chat uses GPT-2, a basic text generation model. It's not as advanced as ChatGPT or other
-              conversational models, so responses may be less coherent. This is just a demonstration of the Hugging Face
-              API integration.
+              This chat uses Hugging Face's Inference API to generate responses. The system will try multiple models
+              until it finds one that works. Responses may vary in quality depending on which model is available.
             </p>
           </div>
         </div>
