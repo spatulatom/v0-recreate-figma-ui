@@ -10,7 +10,7 @@ export async function generateTheme(prompt: string) {
 
     // Use OpenAI to generate a theme
     const result = await openai.chat.completions.create({
-      model: "o1",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
