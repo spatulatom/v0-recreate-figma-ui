@@ -54,34 +54,16 @@ export default function Navbar() {
               Contact
             </Link>
             <Link
-              href="/products/123"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/products/123") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
-            >
-              Dynamic SSR
-            </Link>
-            <Link
-              href="/css-demo"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/css-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
-            >
-              CSS Demo
-            </Link>
-            <Link
-              href="/theme-rendering-demo"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/theme-rendering-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
-            >
-              Theme Rendering
-            </Link>
-            <Link
-              href="/theme-customizer"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/theme-customizer") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
-            >
-              Theme Customizer
-            </Link>
-            <Link
               href="/chat"
               className={`px-3 py-2 text-sm font-medium ${isActive("/chat") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
             >
-              Chat
+              OpenAI Chat
+            </Link>
+            <Link
+              href="/huggingface-chat"
+              className={`px-3 py-2 text-sm font-medium ${isActive("/huggingface-chat") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
+            >
+              HF Chat
             </Link>
             <ThemeToggle />
             <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
@@ -135,39 +117,18 @@ export default function Navbar() {
               Contact
             </Link>
             <Link
-              href="/products/123"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/products/123") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dynamic SSR
-            </Link>
-            <Link
-              href="/css-demo"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/css-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              CSS Demo
-            </Link>
-            <Link
-              href="/theme-rendering-demo"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/theme-rendering-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Theme Rendering
-            </Link>
-            <Link
-              href="/theme-customizer"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/theme-customizer") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Theme Customizer
-            </Link>
-            <Link
               href="/chat"
               className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/chat") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Chat
+              OpenAI Chat
+            </Link>
+            <Link
+              href="/huggingface-chat"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/huggingface-chat") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              HF Chat
             </Link>
             <button className="mt-2 w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
               Get Started
