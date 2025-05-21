@@ -1,9 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Hugging Face API endpoint
+// Hugging Face API endpoint - using the Inference API
 const HF_API_URL = "https://api-inference.huggingface.co/models/"
-// Default model - you can change this to any conversational model on Hugging Face
-const DEFAULT_MODEL = "meta-llama/Llama-2-7b-chat-hf"
+
+// Using a very common and publicly available model
+const DEFAULT_MODEL = "gpt2" // Simple text generation model that's widely accessible
+const FALLBACK_MODEL = "distilgpt2" // Even smaller fallback model
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,31 +39,63 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Format messages for Hugging Face
-    // For most models, we need to convert the messages array into a single text prompt
-    const formattedPrompt = formatMessagesForModel(messages)
+    // Get the last user message
+    const lastMessage = messages.filter((msg) => msg.role === "user").pop()
+    if (!lastMessage) {
+      return NextResponse.json({ error: "No user message found" }, { status: 400 })
+    }
 
-    // Call Hugging Face API
-    const response = await fetch(`${HF_API_URL}${DEFAULT_MODEL}`, {
+    const prompt = lastMessage.content
+
+    console.log("Sending request to Hugging Face API with prompt:", prompt)
+    console.log("Using model:", DEFAULT_MODEL)
+
+    // Try with the default model first
+    let response = await fetch(`${HF_API_URL}${DEFAULT_MODEL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${hfToken}`,
       },
       body: JSON.stringify({
-        inputs: formattedPrompt,
+        inputs: prompt,
         parameters: {
-          max_new_tokens: 250,
+          max_length: 100,
           temperature: 0.7,
-          top_p: 0.9,
-          do_sample: true,
+          return_full_text: false,
         },
       }),
     })
 
+    // If the default model fails, try the fallback model
+    if (!response.ok) {
+      console.log(
+        `Default model ${DEFAULT_MODEL} failed with status ${response.status}. Trying fallback model ${FALLBACK_MODEL}`,
+      )
+
+      response = await fetch(`${HF_API_URL}${FALLBACK_MODEL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${hfToken}`,
+        },
+        body: JSON.stringify({
+          inputs: prompt,
+          parameters: {
+            max_length: 100,
+            temperature: 0.7,
+            return_full_text: false,
+          },
+        }),
+      })
+    }
+
+    console.log("Hugging Face API response status:", response.status)
+
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("Hugging Face API error:", errorText)
+      console.error("Hugging Face API error response:", errorText)
+      console.error("Response headers:", Object.fromEntries([...response.headers.entries()]))
 
       return NextResponse.json(
         {
@@ -69,7 +103,7 @@ export async function POST(req: NextRequest) {
           details: errorText,
           message: {
             role: "assistant",
-            content: "Sorry, I encountered an error while processing your request. Please try again later.",
+            content: `Sorry, I encountered an error while processing your request. Status: ${response.status}. Please try again later.`,
           },
         },
         { status: 500 },
@@ -77,26 +111,32 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await response.json()
+    console.log("Hugging Face API result:", JSON.stringify(result))
 
     // Extract the generated text from the response
-    // The response format can vary depending on the model
     let generatedText = ""
-    if (Array.isArray(result) && result.length > 0) {
-      generatedText = result[0]?.generated_text || ""
-    } else if (result.generated_text) {
-      generatedText = result.generated_text
-    } else {
-      generatedText = JSON.stringify(result)
-    }
 
-    // Clean up the response to extract just the assistant's reply
-    const cleanedResponse = cleanModelResponse(generatedText, formattedPrompt)
+    // Handle different response formats
+    if (Array.isArray(result) && result.length > 0) {
+      // Format for some models like GPT-2
+      generatedText = result[0]?.generated_text || ""
+    } else if (typeof result === "object" && result.generated_text) {
+      // Format for some other models
+      generatedText = result.generated_text
+    } else if (typeof result === "string") {
+      // Direct string response
+      generatedText = result
+    } else {
+      // Try to extract from any other format
+      generatedText = JSON.stringify(result)
+      console.warn("Unexpected response format:", result)
+    }
 
     // Return the response
     return NextResponse.json({
       message: {
         role: "assistant",
-        content: cleanedResponse,
+        content: generatedText.trim() || "I processed your request but couldn't generate a proper response.",
       },
     })
   } catch (error) {
@@ -115,54 +155,4 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     )
   }
-}
-
-// Helper function to format messages for the model
-function formatMessagesForModel(messages: any[]): string {
-  // Skip the system message (first message) if it exists
-  const conversationMessages = messages[0]?.role === "system" ? messages.slice(1) : messages
-
-  // Format for Llama-2-chat style
-  let prompt = ""
-
-  // Add system prompt if it exists
-  if (messages[0]?.role === "system") {
-    prompt += `<s>[INST] <<SYS>>\n${messages[0].content}\n<</SYS>>\n\n`
-  } else {
-    prompt += "<s>[INST] "
-  }
-
-  // Add conversation history
-  for (let i = 0; i < conversationMessages.length; i++) {
-    const message = conversationMessages[i]
-
-    if (message.role === "user") {
-      // If this is not the first user message and follows another user message, add formatting
-      if (i > 0 && i === conversationMessages.length - 1) {
-        prompt += `${message.content} [/INST]`
-      } else {
-        prompt += `${message.content}`
-      }
-    } else if (message.role === "assistant") {
-      prompt += ` [/INST] ${message.content} </s><s>[INST] `
-    }
-  }
-
-  return prompt
-}
-
-// Helper function to clean up the model response
-function cleanModelResponse(response: string, prompt: string): string {
-  // Remove the original prompt from the beginning of the response
-  if (response.startsWith(prompt)) {
-    response = response.substring(prompt.length)
-  }
-
-  // Remove any trailing [/INST] or similar tokens
-  response = response.replace(/\[\/INST\]/g, "").trim()
-
-  // Remove any assistant: or AI: prefixes
-  response = response.replace(/^(assistant:|AI:)/i, "").trim()
-
-  return response
 }
