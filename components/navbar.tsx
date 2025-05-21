@@ -77,6 +77,12 @@ export default function Navbar() {
             >
               Theme Customizer
             </Link>
+            <Link
+              href="/chat"
+              className={`px-3 py-2 text-sm font-medium ${isActive("/chat") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
+            >
+              Chat
+            </Link>
             <ThemeToggle />
             <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
               Get Started
@@ -155,6 +161,13 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(false)}
             >
               Theme Customizer
+            </Link>
+            <Link
+              href="/chat"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/chat") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Chat
             </Link>
             <button className="mt-2 w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
               Get Started
