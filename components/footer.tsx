@@ -54,46 +54,56 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/css-demo" className="text-muted-foreground hover:text-primary">
+                  CSS Demo
+                </Link>
+              </li>
+              <li>
+                <Link href="/products/1" className="text-muted-foreground hover:text-primary">
+                  Dynamic Product
+                </Link>
+              </li>
+              <li>
+                <Link href="/theme-rendering-demo" className="text-muted-foreground hover:text-primary">
+                  Theme Rendering
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Demo Pages */}
+          <div>
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Demo Pages</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/chat" className="text-muted-foreground hover:text-primary">
+                  OpenAI Chat
+                </Link>
+              </li>
+              <li>
+                <Link href="/huggingface-chat" className="text-muted-foreground hover:text-primary">
+                  Hugging Face Chat
+                </Link>
+              </li>
+              <li>
+                <Link href="/theme-customizer" className="text-muted-foreground hover:text-primary">
+                  Theme Customizer
+                </Link>
+              </li>
+              <li>
                 <Link href="/features" className="text-muted-foreground hover:text-primary">
                   Features
                 </Link>
               </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-primary">
-                  About Us
+                  About
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-muted-foreground hover:text-primary">
                   Contact
                 </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Legal</h3>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  Cookie Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-muted-foreground hover:text-primary">
-                  GDPR
-                </a>
               </li>
             </ul>
           </div>

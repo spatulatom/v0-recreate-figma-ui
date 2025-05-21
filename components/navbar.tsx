@@ -36,22 +36,22 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/features"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/features") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
+              href="/css-demo"
+              className={`px-3 py-2 text-sm font-medium ${isActive("/css-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
             >
-              Features
+              CSS Demo
             </Link>
             <Link
-              href="/about"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/about") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
+              href="/products/1"
+              className={`px-3 py-2 text-sm font-medium ${isActive("/products/1") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
             >
-              About
+              Dynamic Product
             </Link>
             <Link
-              href="/contact"
-              className={`px-3 py-2 text-sm font-medium ${isActive("/contact") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
+              href="/theme-rendering-demo"
+              className={`px-3 py-2 text-sm font-medium ${isActive("/theme-rendering-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary"}`}
             >
-              Contact
+              Theme Rendering
             </Link>
             <Link
               href="/chat"
@@ -96,25 +96,25 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/features"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/features") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+              href="/css-demo"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/css-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Features
+              CSS Demo
             </Link>
             <Link
-              href="/about"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/about") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+              href="/products/1"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/products/1") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              About
+              Dynamic Product
             </Link>
             <Link
-              href="/contact"
-              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/contact") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
+              href="/theme-rendering-demo"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${isActive("/theme-rendering-demo") ? "active-link font-semibold" : "text-foreground hover:text-primary hover:bg-gray-50 dark:hover:bg-gray-800"}`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Contact
+              Theme Rendering
             </Link>
             <Link
               href="/chat"
