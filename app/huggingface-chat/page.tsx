@@ -24,6 +24,8 @@ export default function HuggingFaceChatPage() {
   const [modelInfo, setModelInfo] = useState("Using Hugging Face models")
   const [apiStatus, setApiStatus] = useState<"untested" | "working" | "error">("untested")
   const [currentModel, setCurrentModel] = useState<string | null>(null)
+  const [showDebug, setShowDebug] = useState(false)
+  const [debugInfo, setDebugInfo] = useState<string | null>(null)
 
   // Check API status on component mount
   useEffect(() => {
@@ -87,6 +89,7 @@ export default function HuggingFaceChatPage() {
     setInput("")
     setIsLoading(true)
     setError(null)
+    setDebugInfo(null)
 
     try {
       const response = await fetch("/api/huggingface-chat", {
@@ -124,6 +127,14 @@ export default function HuggingFaceChatPage() {
           setCurrentModel(data.modelUsed)
           setModelInfo(`Using Hugging Face model: ${data.modelUsed}`)
         }
+
+        // Store raw response for debugging
+        if (data.rawResponse) {
+          setDebugInfo(data.rawResponse)
+        }
+
+        // Log the response for debugging
+        console.log("Response from model:", data.modelUsed, data.message.content)
       } else {
         throw new Error("Response missing message data")
       }
@@ -188,7 +199,8 @@ export default function HuggingFaceChatPage() {
             <p className="font-medium">About this demo:</p>
             <p className="text-sm mt-1">
               This chat uses Hugging Face's Inference API to generate responses. The system will try multiple models
-              until it finds one that works. Responses may vary in quality depending on which model is available.
+              until it finds one that works. The responses are not from a conversational AI like ChatGPT, so they may
+              sometimes be unusual or off-topic.
             </p>
           </div>
         </div>
@@ -231,6 +243,24 @@ export default function HuggingFaceChatPage() {
         </Button>
       </form>
 
+      {/* Debug Information */}
+      <div className="mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowDebug(!showDebug)}
+          className="text-xs text-muted-foreground"
+        >
+          {showDebug ? "Hide Debug Info" : "Show Debug Info"}
+        </Button>
+
+        {showDebug && debugInfo && (
+          <div className="mt-2 p-3 bg-muted rounded-md overflow-auto max-h-[200px] text-xs">
+            <pre>{debugInfo}</pre>
+          </div>
+        )}
+      </div>
+
       <div className="mt-4 text-sm text-muted-foreground">
         <p>Note: You need to add a HUGGINGFACE_API_TOKEN environment variable to use this feature.</p>
         <p>
@@ -243,10 +273,6 @@ export default function HuggingFaceChatPage() {
           >
             huggingface.co/settings/tokens
           </a>
-        </p>
-        <p className="mt-2">
-          <strong>Troubleshooting:</strong> If you're seeing errors, make sure your token has the correct permissions
-          and that you have access to the model being used.
         </p>
       </div>
     </div>

@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server"
 
-// Hugging Face Inference API endpoint - using the correct URL structure
+// Hugging Face Inference API endpoint
 const HF_INFERENCE_API = "https://api-inference.huggingface.co/models/"
 
 // Using models that are definitely available and don't require special access
+// Removed google/flan-t5-base which was returning 404
 const MODELS = [
-  "facebook/bart-large-cnn", // Summarization model that works well for general text generation
-  "google/flan-t5-small", // Small but effective text generation model
+  "facebook/bart-large-cnn", // Summarization model that works well
+  "distilgpt2", // Smaller version of GPT-2, more likely to be available
+  "gpt2", // Original GPT-2
   "distilbert-base-uncased", // Fallback for simple text tasks
 ]
 
@@ -53,6 +55,7 @@ export async function POST(req: NextRequest) {
     // Try each model in sequence until one works
     let response = null
     let modelUsed = ""
+    let rawResult = null
     const errorDetails = []
 
     for (const model of MODELS) {
@@ -84,7 +87,19 @@ export async function POST(req: NextRequest) {
         if (response.ok) {
           modelUsed = model
           console.log(`Success with model: ${model}, status: ${response.status}`)
-          break
+
+          // Parse the successful response
+          try {
+            rawResult = await response.json()
+            console.log("Hugging Face API result:", JSON.stringify(rawResult).substring(0, 200) + "...")
+            break // Only break if we successfully parsed the response
+          } catch (parseError) {
+            console.error(`Error parsing response from ${model}:`, parseError)
+            errorDetails.push(
+              `${model}: Response parsing error - ${parseError instanceof Error ? parseError.message : "Unknown error"}`,
+            )
+            // Continue to next model if parsing fails
+          }
         } else {
           const errorText = await response.text()
           console.error(`Model ${model} failed with status ${response.status}: ${errorText}`)
@@ -97,7 +112,7 @@ export async function POST(req: NextRequest) {
     }
 
     // If all models failed
-    if (!response || !response.ok) {
+    if (!response || !response.ok || !rawResult) {
       console.error("All models failed. Error details:", errorDetails)
       return NextResponse.json(
         {
@@ -112,49 +127,39 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Parse the successful response
-    let result
-    try {
-      result = await response.json()
-      console.log("Hugging Face API result:", JSON.stringify(result).substring(0, 200) + "...")
-    } catch (error) {
-      console.error("Error parsing response:", error)
-      return NextResponse.json(
-        {
-          error: "Failed to parse response",
-          details: error instanceof Error ? error.message : "Unknown error",
-          message: {
-            role: "assistant",
-            content: "Sorry, I received a response but couldn't parse it properly.",
-          },
-        },
-        { status: 500 },
-      )
-    }
-
     // Extract the generated text based on the model used
     let generatedText = ""
 
     if (modelUsed.includes("bart")) {
-      // BART models typically return an array with generated_text
+      // BART models return an array with summary_text for summarization tasks
       generatedText =
-        Array.isArray(result) && result[0]?.generated_text
-          ? result[0].generated_text
-          : result?.generated_text || "No response generated"
-    } else if (modelUsed.includes("t5")) {
-      // T5 models typically return an array with generated_text
+        Array.isArray(rawResult) && rawResult[0]?.summary_text
+          ? rawResult[0].summary_text
+          : rawResult?.summary_text || rawResult?.generated_text || "No response generated"
+    } else if (modelUsed.includes("gpt2")) {
+      // GPT-2 models typically return generated_text
       generatedText =
-        Array.isArray(result) && result[0]?.generated_text
-          ? result[0].generated_text
-          : result?.generated_text || "No response generated"
+        Array.isArray(rawResult) && rawResult[0]?.generated_text
+          ? rawResult[0].generated_text
+          : rawResult?.generated_text || "No response generated"
     } else if (modelUsed.includes("bert")) {
       // BERT models typically return embeddings or classifications
       generatedText = "I processed your message, but I'm primarily an understanding model, not a text generation model."
     } else {
-      // Generic fallback
+      // Generic fallback - try all possible response formats
       generatedText =
-        typeof result === "string" ? result : result?.generated_text || JSON.stringify(result).substring(0, 500)
+        Array.isArray(rawResult) && rawResult[0]?.summary_text
+          ? rawResult[0].summary_text
+          : Array.isArray(rawResult) && rawResult[0]?.generated_text
+            ? rawResult[0].generated_text
+            : rawResult?.summary_text ||
+              rawResult?.generated_text ||
+              (typeof rawResult === "string" ? rawResult : JSON.stringify(rawResult).substring(0, 500))
     }
+
+    // Add debug logging
+    console.log("Extracted text:", generatedText)
+    console.log("Original result structure:", JSON.stringify(rawResult).substring(0, 200))
 
     // Return the response with the model used
     return NextResponse.json({
@@ -163,6 +168,10 @@ export async function POST(req: NextRequest) {
         content: generatedText.trim() || "I processed your request but couldn't generate a proper response.",
       },
       modelUsed: modelUsed,
+      rawResponse:
+        typeof rawResult === "object"
+          ? JSON.stringify(rawResult).substring(0, 500)
+          : String(rawResult).substring(0, 500),
     })
   } catch (error) {
     console.error("Hugging Face API error:", error)
