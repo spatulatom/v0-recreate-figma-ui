@@ -174,7 +174,7 @@ export default function GeminiChatPage() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
       <p className="text-sm text-muted-foreground mb-2">
-        Powered by Google's Gemini AI
+        Powered by Google's Gemini AI, model used is the latest Gemini 2.5 Flash Preview 05-20. 
       </p>
 
       {/* API Status Indicator */}
