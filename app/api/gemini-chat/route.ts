@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
       ) {
         // Extract text from all parts and join them
         generatedText = candidate.content.parts
-          .map((part) => part.text || "")
+          .map((part: GeminiContentPart) => part.text || "")
           .join("")
           .trim();
       }
@@ -168,4 +168,9 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+interface GeminiContentPart {
+  text?: string;
+  // Add other properties if they exist and are used
 }
