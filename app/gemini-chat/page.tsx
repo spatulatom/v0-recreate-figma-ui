@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Send, AlertCircle, Info } from "lucide-react";
 
@@ -26,6 +26,8 @@ export default function GeminiChatPage() {
   );
   const [showDebug, setShowDebug] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [shouldFocusInput, setShouldFocusInput] = useState(false); // Added state for focusing
 
   // Check API status on component mount
   useEffect(() => {
@@ -85,6 +87,16 @@ export default function GeminiChatPage() {
 
     checkApiStatus();
   }, []);
+
+  // Effect to focus input when shouldFocusInput is true
+  useEffect(() => {
+    if (shouldFocusInput && inputRef.current) {
+      if (!inputRef.current.disabled) {
+        inputRef.current.focus();
+      }
+      setShouldFocusInput(false);
+    }
+  }, [shouldFocusInput]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,6 +179,7 @@ export default function GeminiChatPage() {
       ]);
     } finally {
       setIsLoading(false);
+      setShouldFocusInput(true); // Trigger focus via useEffect
     }
   }
 
@@ -174,7 +187,8 @@ export default function GeminiChatPage() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
       <p className="text-sm text-muted-foreground mb-2">
-        Powered by Google's Gemini AI, model used is the latest Gemini 2.5 Flash Preview 05-20. 
+        Powered by Google's Gemini AI, model used is the latest Gemini 2.5 Flash
+        Preview 05-20.
       </p>
 
       {/* API Status Indicator */}
@@ -245,8 +259,9 @@ export default function GeminiChatPage() {
       </div>
 
       {/* Input form */}
-      <form onSubmit={handleSubmit} className="flex gap-2">
+      <form onSubmit={handleSubmit} className="mt-4 flex items-center">
         <input
+          ref={inputRef}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -256,7 +271,8 @@ export default function GeminiChatPage() {
         />
         <Button
           type="submit"
-          disabled={isLoading || !input.trim() || apiStatus === "error"}
+          disabled={isLoading || apiStatus === "untested"}
+          className="ml-2"
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -266,7 +282,7 @@ export default function GeminiChatPage() {
         </Button>
       </form>
 
-      {/* Debug Information */}
+        {/* Debug Information */}
       <div className="mt-4">
         <Button
           variant="outline"
