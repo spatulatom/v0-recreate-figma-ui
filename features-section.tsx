@@ -15,12 +15,12 @@ export default function FeaturesSection() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-foreground text-4xl font-bold mb-4">
-            Core Technologies & Experiments
+            links to docs and blogs
           </h2>
           <div className="h-2 w-64 bg-[#ffe492] mx-auto mb-6"></div>
           <p className="text-foreground max-w-2xl mx-auto">
-            Explore a variety of demonstrations and tools built with
-            cutting-edge web and AI technologies.
+            a variety of demonstrations and tools built with
+             web and AI technologies
           </p>
         </div>
 
@@ -187,9 +187,9 @@ export default function FeaturesSection() {
             target="_blank"
             rel="noopener noreferrer"
             title="Explore Vercel's Blog for All Experiments"
-            className="bg-[#4f9cf9] text-white px-8 py-4 rounded-md flex items-center gap-2 mx-auto hover:bg-[#37a3ff] transition-colors"
+            className="bg-[#4f9cf9] text-white px-8 py-4 rounded-md inline-flex items-center gap-2 hover:bg-[#37a3ff] transition-colors"
           >
-            Vercel Blog (All Experiments) <ArrowRight size={18} />
+            Vercel Blog <ArrowRight size={18} />
           </a>
         </div>
       </div>
