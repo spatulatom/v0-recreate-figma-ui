@@ -77,12 +77,22 @@ export async function POST(req: NextRequest) {
 
     // Handle system message for systemInstruction
     if (messages[0]?.role === "system") {
+      const originalSystemContent = messages[0].content;
+      const lengthConstraint =
+        "Keep your response concise, ideally no more than four sentences. It can be shorter if appropriate.";
       systemInstruction = {
-        // role: "system", // Role is not explicitly set for systemInstruction's content object
-        parts: [{ text: messages[0].content }],
+        parts: [{ text: `${originalSystemContent}\\n\\n${lengthConstraint}` }],
       };
       // Remove system message from history to be processed for turns
       messagesForHistoryProcessing = messages.slice(1);
+    } else {
+      // If no system message from client, create one with the length constraint
+      const lengthConstraint =
+        "Keep your response concise, ideally no more than four sentences. It can be shorter if appropriate.";
+      systemInstruction = {
+        parts: [{ text: lengthConstraint }],
+      };
+      // No need to slice messagesForHistoryProcessing as there was no system message at index 0
     }
 
     // Cap the number of user/assistant messages to send
