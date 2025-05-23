@@ -295,7 +295,7 @@ export default function GeminiChatPage() {
         </Button>
       </form>
 
-        {/* Debug Information */}
+      {/* Debug Information */}
       <div className="mt-4">
         <Button
           variant="outline"
