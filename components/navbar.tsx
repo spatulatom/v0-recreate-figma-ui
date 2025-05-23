@@ -92,9 +92,15 @@ export default function Navbar() {
               Gemini Chat
             </Link>
             <ThemeToggle />
-            <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
-              Get Started
-            </button>
+            <a
+              href="https://cssbattle.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+              title="Go to CSS Battle"
+            >
+              CSS Battle
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -184,9 +190,16 @@ export default function Navbar() {
             >
               Gemini Chat
             </Link>
-            <button className="mt-2 w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
-              Get Started
-            </button>
+            <a
+              href="https://cssbattle.dev/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors block text-center"
+              onClick={() => setIsMenuOpen(false)}
+              title="Go to CSS Battle"
+            >
+              CSS Battle
+            </a>
           </div>
         </div>
       )}

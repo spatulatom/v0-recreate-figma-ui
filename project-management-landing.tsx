@@ -1,6 +1,6 @@
-import { ArrowRight } from "lucide-react"
-import FeaturesSection from "./features-section"
-import Image from "next/image"
+import { ArrowRight } from "lucide-react";
+import FeaturesSection from "./features-section";
+import Image from "next/image";
 
 export default function ProjectManagementLanding() {
   return (
@@ -10,18 +10,25 @@ export default function ProjectManagementLanding() {
         <div className="relative z-10">
           <div className="relative">
             <h1 className="text-foreground text-5xl font-bold mb-2">
-              Project <br />
-              Management
+              Next.js & AI <br />
+              Playground
             </h1>
             <div className="h-2 w-64 bg-[#ffe492] -mt-3 mb-6"></div>
           </div>
           <p className="text-foreground mb-8 max-w-md">
-            Images, videos, PDFs and audio files are supported. Create math expressions and diagrams directly from the
-            app. Take photos with the mobile app and save them to a note.
+            Exploring Next.js and experimenting with various AI integrations.
+            This project serves as a playground for learning and innovation.
           </p>
-          <button className="bg-[#4f9cf9] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#37a3ff] transition-colors">
-            Get Started <ArrowRight size={18} />
-          </button>
+          <a
+            href="https://vercel.com/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Explore Vercel's Blog"
+            className="bg-[#4f9cf9] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#37a3ff] transition-colors"
+          >
+            Vercel Blog <ArrowRight size={18} />
+          </a>
+          {/* <p className="text-xs text-muted-foreground mt-1">(opens Vercel's Blog)</p> */}
         </div>
 
         <div className="relative z-10">
@@ -84,33 +91,53 @@ export default function ProjectManagementLanding() {
         </div>
 
         <div>
-          <h2 className="text-foreground text-5xl font-bold mb-6">Work together</h2>
+          <h2 className="text-foreground text-5xl font-bold mb-6">
+            Experiment & Learn
+          </h2>
           <p className="text-foreground mb-8 max-w-md">
-            With whitepace, share your notes with your colleagues and collaborate on them. You can also publish a note
-            to the internet and share the URL with others.
+            Dive into various AI chat integrations, UI component showcases, and
+            Next.js features. This is a space for hands-on learning and trying
+            out new technologies.
           </p>
-          <button className="bg-[#4f9cf9] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#37a3ff] transition-colors">
-            Try it now <ArrowRight size={18} />
-          </button>
+          <a
+            href="https://tailwindcss.com/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Explore Tailwind CSS Blog"
+            className="bg-[#4f9cf9] text-white px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#37a3ff] transition-colors"
+          >
+            Tailwind CSS Blog <ArrowRight size={18} />
+          </a>
+          {/* <p className="text-xs text-muted-foreground mt-1">(opens Tailwind CSS Blog)</p> */}
         </div>
       </div>
 
       {/* Testimonials Section */}
       <div className="mt-32 mb-24">
         <div className="text-center mb-16">
-          <h2 className="text-foreground text-4xl font-bold mb-4">What our customers say</h2>
+          <h2 className="text-foreground text-4xl font-bold mb-4">
+            Project Highlights
+          </h2>
           <div className="h-2 w-64 bg-[#ffe492] mx-auto mb-6"></div>
           <p className="text-foreground max-w-2xl mx-auto">
-            Discover how teams of all sizes are using Whitepace to improve their productivity and workflow.
+            A collection of experiments and features built while exploring
+            Next.js and AI. (Note: Testimonials below are placeholders and not
+            actual user feedback for this playground project.)
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Testimonial 1 */}
+          {/* Testimonial 1 -> Experiment 1 */}
           <div className="bg-background rounded-lg p-8 shadow-lg relative">
             <div className="absolute -top-5 -left-5 w-10 h-10 bg-[#ffdc4d] rounded-full"></div>
             <div className="mb-6">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M9.33333 20H4L8 12H5.33333V4H16V14.6667L9.33333 20ZM25.3333 20H20L24 12H21.3333V4H32V14.6667L25.3333 20Z"
                   fill="#4f9cf9"
@@ -118,25 +145,34 @@ export default function ProjectManagementLanding() {
               </svg>
             </div>
             <p className="text-foreground mb-6">
-              "Whitepace has revolutionized how our team collaborates on projects. The ability to share notes and work
-              together in real-time has significantly improved our productivity."
+              "This playground demonstrates integrating various AI models for
+              chat functionalities. It's been a great way to understand
+              different APIs and their capabilities."
             </p>
             <div className="flex items-center">
               <div className="w-12 h-12 bg-[#c4defd] rounded-full flex items-center justify-center mr-4">
-                <span className="text-[#4f9cf9] font-bold">JD</span>
+                <span className="text-[#4f9cf9] font-bold">AI</span>
               </div>
               <div>
-                <h4 className="font-bold text-foreground">Jane Doe</h4>
-                <p className="text-sm text-muted-foreground">Product Manager, TechCorp</p>
+                <h4 className="font-bold text-foreground">AI Integrations</h4>
+                <p className="text-sm text-muted-foreground">
+                  Hugging Face, Gemini
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Testimonial 2 */}
+          {/* Testimonial 2 -> Experiment 2 */}
           <div className="bg-background rounded-lg p-8 shadow-lg relative">
             <div className="absolute -top-5 -left-5 w-10 h-10 bg-[#00ca75] rounded-full"></div>
             <div className="mb-6">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M9.33333 20H4L8 12H5.33333V4H16V14.6667L9.33333 20ZM25.3333 20H20L24 12H21.3333V4H32V14.6667L25.3333 20Z"
                   fill="#4f9cf9"
@@ -144,25 +180,34 @@ export default function ProjectManagementLanding() {
               </svg>
             </div>
             <p className="text-foreground mb-6">
-              "The math expressions and diagram features are game-changers for our engineering team. We can document
-              complex ideas directly in our notes without switching between multiple apps."
+              "Building with Next.js allows for rapid development and a
+              fantastic developer experience. Exploring server components, API
+              routes, and dynamic rendering has been insightful."
             </p>
             <div className="flex items-center">
               <div className="w-12 h-12 bg-[#c4defd] rounded-full flex items-center justify-center mr-4">
-                <span className="text-[#4f9cf9] font-bold">RS</span>
+                <span className="text-[#4f9cf9] font-bold">N</span>
               </div>
               <div>
-                <h4 className="font-bold text-foreground">Robert Smith</h4>
-                <p className="text-sm text-muted-foreground">Lead Engineer, InnovateCo</p>
+                <h4 className="font-bold text-foreground">Next.js Features</h4>
+                <p className="text-sm text-muted-foreground">
+                  App Router, API Routes
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Testimonial 3 */}
+          {/* Testimonial 3 -> Experiment 3 */}
           <div className="bg-background rounded-lg p-8 shadow-lg relative">
             <div className="absolute -top-5 -left-5 w-10 h-10 bg-[#ff5758] rounded-full"></div>
             <div className="mb-6">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   d="M9.33333 20H4L8 12H5.33333V4H16V14.6667L9.33333 20ZM25.3333 20H20L24 12H21.3333V4H32V14.6667L25.3333 20Z"
                   fill="#4f9cf9"
@@ -170,27 +215,37 @@ export default function ProjectManagementLanding() {
               </svg>
             </div>
             <p className="text-foreground mb-6">
-              "As a remote team, we needed a solution that would help us stay connected and organized. Whitepace has
-              been that solution. The ability to publish notes to the internet has made sharing with clients seamless."
+              "Experimenting with UI components and theming in a Next.js
+              environment. This project showcases how to build a responsive and
+              customizable user interface."
             </p>
             <div className="flex items-center">
               <div className="w-12 h-12 bg-[#c4defd] rounded-full flex items-center justify-center mr-4">
-                <span className="text-[#4f9cf9] font-bold">AL</span>
+                <span className="text-[#4f9cf9] font-bold">UI</span>
               </div>
               <div>
-                <h4 className="font-bold text-foreground">Amanda Lee</h4>
-                <p className="text-sm text-muted-foreground">Creative Director, DesignHub</p>
+                <h4 className="font-bold text-foreground">UI/UX Exploration</h4>
+                <p className="text-sm text-muted-foreground">
+                  Shadcn/UI, Tailwind CSS
+                </p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex justify-center mt-12">
-          <button className="bg-background border border-[#4f9cf9] text-[#4f9cf9] px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#f8fafc] transition-colors">
-            Read more testimonials <ArrowRight size={18} />
-          </button>
+          <a
+            href="https://react.dev/blog"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Explore React Blog"
+            className="bg-background border border-[#4f9cf9] text-[#4f9cf9] px-6 py-3 rounded-md flex items-center gap-2 hover:bg-[#f8fafc] transition-colors"
+          >
+            React Blog <ArrowRight size={18} />
+          </a>
+          {/* <p className="text-xs text-muted-foreground mt-1 text-center">(opens React Blog)</p> */}
         </div>
       </div>
     </div>
-  )
+  );
 }
