@@ -28,6 +28,14 @@ export default function GeminiChatPage() {
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false); // Added state for focusing
+  const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for the messages container
+
+  // Scroll to bottom of messages when new messages are added
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   // Check API status on component mount
   useEffect(() => {
@@ -237,7 +245,10 @@ export default function GeminiChatPage() {
       </div>
 
       {/* Chat messages */}
-      <div className="bg-card border border-border rounded-lg p-4 mb-4 h-[400px] overflow-y-auto">
+      <div
+        ref={messagesEndRef} // Assign ref to the messages container
+        className="bg-card border border-border rounded-lg p-4 mb-4 h-[400px] overflow-y-auto"
+      >
         {messages.slice(1).map((message, index) => (
           <div
             key={index}
@@ -256,6 +267,8 @@ export default function GeminiChatPage() {
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         )}
+        {/* Dummy div to help with scrolling to the very bottom if needed, though scrollTop = scrollHeight should work for the container itself */}
+        {/* <div ref={messagesEndRef} /> */}
       </div>
 
       {/* Input form */}

@@ -4,7 +4,34 @@ import { type NextRequest, NextResponse } from "next/server";
 
 // Gemini API endpoint
 const GEMINI_API_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+
+const MAX_CHAT_MESSAGES_TO_SEND = 15; // Cap for user/assistant messages
+
+interface ClientMessage {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
+interface GeminiPart {
+  text: string;
+}
+
+interface GeminiContent {
+  role?: "user" | "model"; // Role is optional for systemInstruction
+  parts: GeminiPart[];
+}
+
+interface GeminiRequest {
+  contents: GeminiContent[];
+  systemInstruction?: GeminiContent;
+  generationConfig?: {
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+    maxOutputTokens?: number;
+  };
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,10 +46,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { messages } = body;
-    if (!messages || !Array.isArray(messages)) {
+    const { messages }: { messages: ClientMessage[] } = body;
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
-        { error: "Messages are required and must be an array" },
+        { error: "Messages are required, must be a non-empty array" },
         { status: 400 }
       );
     }
@@ -43,34 +70,79 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Get the last user message and format it for Gemini
-    const userMessages = messages.filter((msg) => msg.role === "user");
-    if (userMessages.length === 0) {
+    let systemInstruction: GeminiContent | undefined = undefined;
+    const chatHistoryForGemini: GeminiContent[] = [];
+
+    let messagesForHistoryProcessing = messages;
+
+    // Handle system message for systemInstruction
+    if (messages[0]?.role === "system") {
+      systemInstruction = {
+        // role: "system", // Role is not explicitly set for systemInstruction's content object
+        parts: [{ text: messages[0].content }],
+      };
+      // Remove system message from history to be processed for turns
+      messagesForHistoryProcessing = messages.slice(1);
+    }
+
+    // Cap the number of user/assistant messages to send
+    if (messagesForHistoryProcessing.length > MAX_CHAT_MESSAGES_TO_SEND) {
+      messagesForHistoryProcessing = messagesForHistoryProcessing.slice(
+        -MAX_CHAT_MESSAGES_TO_SEND
+      );
+    }
+
+    // Transform remaining messages into Gemini format
+    for (const message of messagesForHistoryProcessing) {
+      if (message.role === "user") {
+        chatHistoryForGemini.push({
+          role: "user",
+          parts: [{ text: message.content }],
+        });
+      } else if (message.role === "assistant") {
+        chatHistoryForGemini.push({
+          role: "model", // Map 'assistant' to 'model'
+          parts: [{ text: message.content }],
+        });
+      }
+      // Silently ignore any other system messages in the chat history part
+    }
+
+    if (chatHistoryForGemini.length === 0 && !systemInstruction) {
+      // This case should ideally be prevented by client-side validation
+      // or if systemInstruction is also considered as a valid starting point.
+      // For now, if history is empty and no system instruction, it's likely an issue.
       return NextResponse.json(
-        { error: "No user messages found" },
+        {
+          error:
+            "No valid user or assistant messages to process after handling system instruction.",
+        },
         { status: 400 }
       );
     }
 
-    // Transform messages into Gemini format
-    // For simplicity, we'll just use the last user message
-    const lastUserMessage = userMessages[userMessages.length - 1];
+    // Log the full request being sent (or a summary)
     console.log(
-      "Sending request to Gemini API with prompt:",
-      lastUserMessage.content
+      `Sending request to Gemini API. System Instruction: ${
+        systemInstruction
+          ? systemInstruction.parts[0].text.substring(0, 50) + "..."
+          : "None"
+      }. History messages: ${
+        chatHistoryForGemini.length
+      } (capped at ${MAX_CHAT_MESSAGES_TO_SEND} user/assistant messages)`
     );
+    if (chatHistoryForGemini.length > 0) {
+      console.log(
+        "Last user/model message:",
+        chatHistoryForGemini[
+          chatHistoryForGemini.length - 1
+        ].parts[0].text.substring(0, 100) + "..."
+      );
+    }
 
     // Prepare the request to Gemini API
-    const geminiRequest = {
-      contents: [
-        {
-          parts: [
-            {
-              text: lastUserMessage.content,
-            },
-          ],
-        },
-      ],
+    const geminiRequest: GeminiRequest = {
+      contents: chatHistoryForGemini,
       generationConfig: {
         temperature: 0.7,
         topK: 40,
@@ -78,6 +150,10 @@ export async function POST(req: NextRequest) {
         maxOutputTokens: 1024,
       },
     };
+
+    if (systemInstruction) {
+      geminiRequest.systemInstruction = systemInstruction;
+    }
 
     // Make the API call to Gemini
     const response = await fetch(`${GEMINI_API_ENDPOINT}?key=${apiKey}`, {
@@ -129,7 +205,7 @@ export async function POST(req: NextRequest) {
       ) {
         // Extract text from all parts and join them
         generatedText = candidate.content.parts
-          .map((part: GeminiContentPart) => part.text || "")
+          .map((part: GeminiPart) => part.text || "") // Ensure GeminiPart is used here
           .join("")
           .trim();
       }
@@ -168,9 +244,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-interface GeminiContentPart {
-  text?: string;
-  // Add other properties if they exist and are used
 }
