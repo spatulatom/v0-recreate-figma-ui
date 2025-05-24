@@ -382,7 +382,7 @@ export default function GeminiChatPage() {
       {/* Chat messages */}
       <div
         ref={messagesEndRef} // Assign ref to the messages container
-        className="bg-card border border-border rounded-lg p-4 mb-4 h-[400px] overflow-y-auto"
+        className="bg-card border border-border rounded-lg p-4 mb-4 max-h-screen overflow-y-auto"
       >
         {" "}
         {messages.slice(1).map((message, index) => (
@@ -414,7 +414,7 @@ export default function GeminiChatPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="w-full text-left justify-start h-auto p-3 text-sm"
+                        className="w-full text-left justify-start h-auto p-3 text-sm whitespace-normal"
                         disabled={isLoading || apiStatus === "error"}
                       >
                         {suggestion}
