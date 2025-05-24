@@ -26,6 +26,7 @@ export default function GeminiChatPage() {
   );
   const [showDebug, setShowDebug] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const [currentModelName, setCurrentModelName] = useState<string | null>(null); // New state for model name
   const inputRef = useRef<HTMLInputElement>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false); // Added state for focusing
   const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for the messages container
@@ -63,6 +64,9 @@ export default function GeminiChatPage() {
           const data = await response.json();
           console.log("API check successful:", data);
           setApiStatus("working");
+          if (data.model) {
+            setCurrentModelName(data.model);
+          }
         } else {
           setApiStatus("error");
           const errorText = await response.text();
@@ -158,6 +162,10 @@ export default function GeminiChatPage() {
         setMessages([...newMessages, data.message]);
         setApiStatus("working");
 
+        if (data.model) {
+          setCurrentModelName(data.model);
+        }
+
         // Store raw response for debugging
         if (data.rawResponse) {
           setDebugInfo(data.rawResponse);
@@ -195,8 +203,10 @@ export default function GeminiChatPage() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
       <p className="text-sm text-muted-foreground mb-2">
-        Powered by Google's Gemini AI, model used is the latest Gemini 2.5 Flash
-        Preview 05-20.
+        Powered by Google's Gemini AI.{" "}
+        {currentModelName
+          ? `Model in use: ${currentModelName}.`
+          : "Loading model information..."}
       </p>
 
       {/* API Status Indicator */}
