@@ -31,6 +31,11 @@ export default function GeminiChatPage() {
   const [shouldFocusInput, setShouldFocusInput] = useState(false); // Added state for focusing
   const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for the messages container
 
+  const initialSystemMessage: Message = {
+    role: "system",
+    content: "You are a helpful assistant powered by Google's Gemini AI.",
+  };
+
   // Scroll to bottom of messages when new messages are added
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -199,12 +204,22 @@ export default function GeminiChatPage() {
     }
   }
 
+  function handleNewChat() {
+    setMessages([initialSystemMessage]);
+    setInput("");
+    setError(null);
+    setDebugInfo(null);
+    // Optionally, reset apiStatus if desired, or keep current model info
+    // setApiStatus("untested"); // Uncomment if you want to re-trigger API status check visual
+    // setCurrentModelName(null); // Uncomment if you want to clear model name on new chat
+    setShouldFocusInput(true);
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
       <p className="text-sm text-muted-foreground mb-2">
         Powered by Google's Gemini AI.{" "}
-     
       </p>
 
       {/* API Status Indicator */}
@@ -221,9 +236,12 @@ export default function GeminiChatPage() {
           {apiStatus === "working" ? (
             <>
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              <span>API is working correctly. {''}{currentModelName
-          ? `Model: ${currentModelName}.`
-          : "Loading model information..."}</span>
+              <span>
+                API is working correctly. {""}
+                {currentModelName
+                  ? `Model: ${currentModelName}.`
+                  : "Loading model information..."}
+              </span>
             </>
           ) : apiStatus === "error" ? (
             <>
@@ -305,23 +323,38 @@ export default function GeminiChatPage() {
         </Button>
       </form>
 
-      {/* Debug Information */}
-      <div className="mt-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowDebug(!showDebug)}
-          className="text-xs text-muted-foreground"
-        >
-          {showDebug ? "Hide Debug Info" : "Show Debug Info"}
-        </Button>
+      {/* Controls Row */}
+      <div className="mt-4 flex justify-between items-center">
+        {/* Debug Information Button */}
+        <div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowDebug(!showDebug)}
+            className="text-xs text-muted-foreground"
+          >
+            {showDebug ? "Hide Debug Info" : "Show Debug Info"}
+          </Button>
+        </div>
 
-        {showDebug && debugInfo && (
-          <div className="mt-2 p-3 bg-muted rounded-md overflow-auto text-xs">
-            <pre className="whitespace-pre-wrap break-all">{debugInfo}</pre>
-          </div>
-        )}
+        {/* New Chat Button */}
+        <div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleNewChat}
+            className="text-xs"
+          >
+            New Chat
+          </Button>
+        </div>
       </div>
+
+      {showDebug && debugInfo && (
+        <div className="mt-2 p-3 bg-muted rounded-md overflow-auto text-xs">
+          <pre className="whitespace-pre-wrap break-all">{debugInfo}</pre>
+        </div>
+      )}
 
       <div className="mt-4 text-sm text-muted-foreground">
         <p>
