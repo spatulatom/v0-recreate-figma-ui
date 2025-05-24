@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 // Gemini API endpoint
 const GEMINI_API_ENDPOINT =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent";
 
 const MAX_CHAT_MESSAGES_TO_SEND = 15; // Cap for user/assistant messages
 
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
     if (messages[0]?.role === "system") {
       const originalSystemContent = messages[0].content;
       const lengthConstraint =
-        "Keep your response concise, ideally no more than four sentences. It can be shorter if appropriate.";
+        "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
       systemInstruction = {
         parts: [{ text: `${originalSystemContent}\\n\\n${lengthConstraint}` }],
       };
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     } else {
       // If no system message from client, create one with the length constraint
       const lengthConstraint =
-        "Keep your response concise, ideally no more than four sentences. It can be shorter if appropriate.";
+        "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
       systemInstruction = {
         parts: [{ text: lengthConstraint }],
       };
