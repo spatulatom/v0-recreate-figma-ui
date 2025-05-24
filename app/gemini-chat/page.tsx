@@ -176,8 +176,11 @@ export default function GeminiChatPage() {
           setCurrentModelName(data.model);
         }
 
-        // Store raw response for debugging
-        if (data.rawResponse) {
+        // Store comprehensive debug info
+        if (data.debugInfo) {
+          setDebugInfo(JSON.stringify(data.debugInfo, null, 2));
+        } else if (data.rawResponse) {
+          // Fallback to raw response if new debug structure not available
           setDebugInfo(data.rawResponse);
         }
 
@@ -277,10 +280,11 @@ export default function GeminiChatPage() {
 
         if (data.model) {
           setCurrentModelName(data.model);
-        }
-
-        // Store raw response for debugging
-        if (data.rawResponse) {
+        } // Store comprehensive debug info
+        if (data.debugInfo) {
+          setDebugInfo(JSON.stringify(data.debugInfo, null, 2));
+        } else if (data.rawResponse) {
+          // Fallback to raw response if new debug structure not available
           setDebugInfo(data.rawResponse);
         }
 
@@ -326,7 +330,8 @@ export default function GeminiChatPage() {
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-2">
-        Chat replies in 5 sentences or less. It is about concise and prompt responses. None of your valuable time will be wasted.
+        Chat replies in 5 sentences or less. It is about concise and prompt
+        responses. None of your valuable time will be wasted.
       </p>
 
       {/* API Status Indicator */}
@@ -382,7 +387,7 @@ export default function GeminiChatPage() {
       {/* Chat messages */}
       <div
         ref={messagesEndRef} // Assign ref to the messages container
-        className="bg-card border border-border rounded-lg p-4 mb-4 min-h-[200px] max-h-screen overflow-y-auto" 
+        className="bg-card border border-border rounded-lg p-4 mb-4 min-h-[200px] max-h-screen overflow-y-auto"
       >
         {" "}
         {messages.slice(1).map((message, index) => (

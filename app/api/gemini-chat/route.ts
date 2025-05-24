@@ -181,6 +181,22 @@ export async function POST(req: NextRequest) {
     } // Parse the response
     const geminiResponse = await response.json();
 
+    // Extract debug information
+    const debugInfo = {
+      responseStatus: response.status,
+      responseHeaders: Object.fromEntries(response.headers.entries()),
+      usageMetadata: geminiResponse.usageMetadata || null,
+      candidatesCount: geminiResponse.candidates?.length || 0,
+      finishReason: geminiResponse.candidates?.[0]?.finishReason || null,
+      safetyRatings: geminiResponse.candidates?.[0]?.safetyRatings || null,
+      inputTokens: geminiResponse.usageMetadata?.promptTokenCount || null,
+      outputTokens: geminiResponse.usageMetadata?.candidatesTokenCount || null,
+      totalTokens: geminiResponse.usageMetadata?.totalTokenCount || null,
+      model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0],
+      timestamp: new Date().toISOString(),
+      messagesCount: chatHistoryForGemini.length,
+    };
+
     // Extract the generated text
     let generatedText = "";
 
@@ -206,7 +222,7 @@ export async function POST(req: NextRequest) {
       );
       generatedText =
         "I processed your request but couldn't generate a proper response.";
-    }    // Enhanced suggestion parsing with robust error handling
+    } // Enhanced suggestion parsing with robust error handling
     let suggestions: string[] = [];
     let mainContent = generatedText;
 
@@ -219,17 +235,17 @@ export async function POST(req: NextRequest) {
     ];
 
     let foundSuggestionBlock = false;
-    
+
     // Try each pattern to find and clean suggestion blocks
     for (const pattern of suggestionPatterns) {
       const match = mainContent.match(pattern);
       if (match) {
         foundSuggestionBlock = true;
         const suggestionText = match[1].trim();
-        
+
         // Remove the entire matched block from content first
-        mainContent = mainContent.replace(match[0], '').trim();
-        
+        mainContent = mainContent.replace(match[0], "").trim();
+
         // Only parse suggestions if there's actual content
         if (suggestionText && suggestionText.length > 0) {
           const suggestionLines = suggestionText
@@ -290,13 +306,13 @@ export async function POST(req: NextRequest) {
         suggestion.length > 10 &&
         !suggestion.toLowerCase().includes("tell me more about") &&
         !suggestion.toLowerCase().includes("what else would you like")
-    );// Basic logging for debugging
+    ); // Basic logging for debugging
     console.log(
       `Processing chat request. Messages: ${chatHistoryForGemini.length}`
     );
     if (suggestions.length > 0) {
       console.log(`Generated ${suggestions.length} suggestions`);
-    } // Return the response
+    } // Return the response with comprehensive debug information
     return NextResponse.json({
       message: {
         role: "assistant",
@@ -304,6 +320,15 @@ export async function POST(req: NextRequest) {
       },
       suggestions: suggestions,
       model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0],
+      rawResponse: generatedText, // Original response text
+      debugInfo: {
+        ...debugInfo,
+        rawResponseText: generatedText,
+        processedContent: mainContent,
+        extractedSuggestions: suggestions,
+        suggestionParsingSuccess: suggestions.length > 0,
+        fullGeminiResponse: geminiResponse, // Complete API response for advanced debugging
+      },
     });
   } catch (error) {
     console.error("Gemini API error:", error);
