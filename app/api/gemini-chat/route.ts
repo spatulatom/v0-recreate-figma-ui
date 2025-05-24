@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
     const geminiResponse = await response.json();
     console.log(
       "Gemini API response:",
-      JSON.stringify(geminiResponse).substring(0, 200) + "..."
+      JSON.stringify(geminiResponse).substring(0, 30) + "..."
     );
 
     // Extract the generated text
@@ -236,8 +236,8 @@ export async function POST(req: NextRequest) {
         role: "assistant",
         content: generatedText,
       },
-      model: "gemini-1.5-flash-latest",
-      rawResponse: JSON.stringify(geminiResponse), // Removed substring
+      model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0], // Dynamically set model name
+      rawResponse: JSON.stringify(geminiResponse),
     });
   } catch (error) {
     console.error("Gemini API error:", error);
