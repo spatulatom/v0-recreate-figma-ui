@@ -217,7 +217,17 @@ export default function GeminiChatPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
+      <div className="flex justify-between items-center mb-2">
+        <h1 className="text-2xl font-bold">Gemini Chat</h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleNewChat}
+          className="text-xs"
+        >
+          New Chat
+        </Button>
+      </div>
       <p className="text-sm text-muted-foreground mb-2">
         Powered by Google's Gemini AI.{" "}
       </p>
@@ -324,7 +334,7 @@ export default function GeminiChatPage() {
       </form>
 
       {/* Controls Row */}
-      <div className="mt-4 flex justify-between items-center">
+      <div className="mt-4 flex items-center">
         {/* Debug Information Button */}
         <div>
           <Button
@@ -337,17 +347,7 @@ export default function GeminiChatPage() {
           </Button>
         </div>
 
-        {/* New Chat Button */}
-        <div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNewChat}
-            className="text-xs"
-          >
-            New Chat
-          </Button>
-        </div>
+        {/* New Chat Button has been moved to the header */}
       </div>
 
       {showDebug && debugInfo && (
