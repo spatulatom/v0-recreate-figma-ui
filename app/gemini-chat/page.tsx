@@ -326,7 +326,7 @@ export default function GeminiChatPage() {
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-2">
-        Powered by Google's Gemini AI.{" "}
+        Chat replies in 5 sentences or less. It is about concise and prompt responses. None of your valuable time will be wasted.
       </p>
 
       {/* API Status Indicator */}
@@ -382,7 +382,7 @@ export default function GeminiChatPage() {
       {/* Chat messages */}
       <div
         ref={messagesEndRef} // Assign ref to the messages container
-        className="bg-card border border-border rounded-lg p-4 mb-4 max-h-screen overflow-y-auto"
+        className="bg-card border border-border rounded-lg p-4 mb-4 min-h-[200px] max-h-screen overflow-y-auto" 
       >
         {" "}
         {messages.slice(1).map((message, index) => (
@@ -441,7 +441,7 @@ export default function GeminiChatPage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
+          placeholder="Type your question..."
           className="flex-1 p-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary dark:bg-gray-800 dark:text-white"
           disabled={isLoading || apiStatus === "error"}
         />

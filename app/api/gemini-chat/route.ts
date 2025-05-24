@@ -206,33 +206,48 @@ export async function POST(req: NextRequest) {
       );
       generatedText =
         "I processed your request but couldn't generate a proper response.";
-    } // Enhanced suggestion parsing with better fallback detection
+    }    // Enhanced suggestion parsing with robust error handling
     let suggestions: string[] = [];
     let mainContent = generatedText;
 
-    // Primary pattern - look for suggestions block
-    const suggestionBlockMatch = generatedText.match(
-      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/i
-    );
+    // Multiple patterns to handle various malformed suggestion blocks
+    const suggestionPatterns = [
+      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/i,
+      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUSTIONS\]/i, // Handle typo
+      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGG?[^\]]*\]/i, // Handle partial typos
+      /\[SUGGESTIONS\]([\s\S]*?)$/i, // Handle unclosed suggestions
+    ];
 
-    if (suggestionBlockMatch) {
-      const suggestionText = suggestionBlockMatch[1].trim();
-      const suggestionLines = suggestionText
-        .split("\n")
-        .map((line) => line.trim())
-        .filter((line) => line.match(/^\d+\./))
-        .map((line) => line.replace(/^\d+\.\s*/, ""))
-        .filter((line) => line.length > 5); // Filter out very short suggestions
+    let foundSuggestionBlock = false;
+    
+    // Try each pattern to find and clean suggestion blocks
+    for (const pattern of suggestionPatterns) {
+      const match = mainContent.match(pattern);
+      if (match) {
+        foundSuggestionBlock = true;
+        const suggestionText = match[1].trim();
+        
+        // Remove the entire matched block from content first
+        mainContent = mainContent.replace(match[0], '').trim();
+        
+        // Only parse suggestions if there's actual content
+        if (suggestionText && suggestionText.length > 0) {
+          const suggestionLines = suggestionText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.match(/^\d+\./))
+            .map((line) => line.replace(/^\d+\.\s*/, ""))
+            .filter((line) => line.length > 5);
 
-      suggestions = suggestionLines.slice(0, 2);
+          suggestions = suggestionLines.slice(0, 2);
+        }
+        break;
+      }
+    }
 
-      // Remove the entire suggestion block from main content
-      mainContent = generatedText
-        .replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/i, "")
-        .trim();
-    } else {
-      // Fallback: Look for numbered list at the end that could be suggestions
-      const lines = generatedText
+    // If no suggestion block found, look for numbered list at the end
+    if (!foundSuggestionBlock) {
+      const lines = mainContent
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line.length > 0);
@@ -275,7 +290,7 @@ export async function POST(req: NextRequest) {
         suggestion.length > 10 &&
         !suggestion.toLowerCase().includes("tell me more about") &&
         !suggestion.toLowerCase().includes("what else would you like")
-    ); // Basic logging for debugging
+    );// Basic logging for debugging
     console.log(
       `Processing chat request. Messages: ${chatHistoryForGemini.length}`
     );
