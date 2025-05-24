@@ -204,9 +204,7 @@ export default function GeminiChatPage() {
       <h1 className="text-2xl font-bold mb-2">Gemini Chat</h1>
       <p className="text-sm text-muted-foreground mb-2">
         Powered by Google's Gemini AI.{" "}
-        {currentModelName
-          ? `Model in use: ${currentModelName}.`
-          : "Loading model information..."}
+     
       </p>
 
       {/* API Status Indicator */}
@@ -223,7 +221,9 @@ export default function GeminiChatPage() {
           {apiStatus === "working" ? (
             <>
               <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-              <span>API is working correctly</span>
+              <span>API is working correctly. {''}{currentModelName
+          ? `Model: ${currentModelName}.`
+          : "Loading model information..."}</span>
             </>
           ) : apiStatus === "error" ? (
             <>
