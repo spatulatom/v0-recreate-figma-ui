@@ -69,37 +69,32 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-
     let systemInstruction: GeminiContent | undefined = undefined;
     const chatHistoryForGemini: GeminiContent[] = [];
 
-    let messagesForHistoryProcessing = messages; // Handle system message for systemInstruction
-    if (messages[0]?.role === "system") {
-      const originalSystemContent = messages[0].content;
-      const lengthConstraint =
-        "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
-      const suggestionInstruction =
-        "\n\nAfter your response, provide exactly 2 follow-up question suggestions that the user might want to ask next. Format them as:\n[SUGGESTIONS]\n1. First suggestion\n2. Second suggestion\n[/SUGGESTIONS]";
-      systemInstruction = {
-        parts: [
-          {
-            text: `${originalSystemContent}\n\n${lengthConstraint}${suggestionInstruction}`,
-          },
-        ],
-      };
-      // Remove system message from history to be processed for turns
-      messagesForHistoryProcessing = messages.slice(1);
-    } else {
-      // If no system message from client, create one with the length constraint
-      const lengthConstraint =
-        "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
-      const suggestionInstruction =
-        "\n\nAfter your response, provide exactly 2 follow-up question suggestions that the user might want to ask next. Format them as:\n[SUGGESTIONS]\n1. First suggestion\n2. Second suggestion\n[/SUGGESTIONS]";
-      systemInstruction = {
-        parts: [{ text: `${lengthConstraint}${suggestionInstruction}` }],
-      };
-      // No need to slice messagesForHistoryProcessing as there was no system message at index 0
-    }
+    // Enhanced system instruction for better suggestion generation
+    const baseInstruction =
+      messages[0]?.role === "system"
+        ? messages[0].content
+        : "You are a helpful assistant powered by Google's Gemini AI.";
+
+    const lengthConstraint =
+      "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
+
+    const suggestionInstruction =
+      "\n\nCRITICAL REQUIREMENT: You MUST end your response with exactly 2 follow-up question suggestions. Use this EXACT format (including proper spelling):\n[SUGGESTIONS]\n1. First specific follow-up question\n2. Second specific follow-up question\n[/SUGGESTIONS]\n\nThe suggestions should be relevant, specific, and encourage further conversation about the topic discussed. Do NOT use generic questions like 'tell me more' - make them specific to our conversation.";
+
+    systemInstruction = {
+      parts: [
+        {
+          text: `${baseInstruction}\n\n${lengthConstraint}${suggestionInstruction}`,
+        },
+      ],
+    };
+
+    // Skip system message from chat history if present
+    let messagesForHistoryProcessing =
+      messages[0]?.role === "system" ? messages.slice(1) : messages;
 
     // Cap the number of user/assistant messages to send
     if (messagesForHistoryProcessing.length > MAX_CHAT_MESSAGES_TO_SEND) {
@@ -135,26 +130,10 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 }
       );
-    }
-
-    // Log the full request being sent (or a summary)
+    } // Log the request summary
     console.log(
-      `Sending request to Gemini API. System Instruction: ${
-        systemInstruction
-          ? systemInstruction.parts[0].text.substring(0, 50) + "..."
-          : "None"
-      }. History messages: ${
-        chatHistoryForGemini.length
-      } (capped at ${MAX_CHAT_MESSAGES_TO_SEND} user/assistant messages)`
+      `Sending request to Gemini API. History messages: ${chatHistoryForGemini.length}`
     );
-    if (chatHistoryForGemini.length > 0) {
-      console.log(
-        "Last user/model message:",
-        chatHistoryForGemini[
-          chatHistoryForGemini.length - 1
-        ].parts[0].text.substring(0, 100) + "..."
-      );
-    }
 
     // Prepare the request to Gemini API
     const geminiRequest: GeminiRequest = {
@@ -199,14 +178,8 @@ export async function POST(req: NextRequest) {
         },
         { status: response.status }
       );
-    }
-
-    // Parse the response
+    } // Parse the response
     const geminiResponse = await response.json();
-    console.log(
-      "Gemini API response:",
-      JSON.stringify(geminiResponse).substring(0, 30) + "..."
-    );
 
     // Extract the generated text
     let generatedText = "";
@@ -233,28 +206,81 @@ export async function POST(req: NextRequest) {
       );
       generatedText =
         "I processed your request but couldn't generate a proper response.";
-    }
-
-    // Parse suggestions from the response
+    } // Enhanced suggestion parsing with better fallback detection
     let suggestions: string[] = [];
     let mainContent = generatedText;
 
-    const suggestionMatch = generatedText.match(
-      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/
+    // Primary pattern - look for suggestions block
+    const suggestionBlockMatch = generatedText.match(
+      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/i
     );
-    if (suggestionMatch) {
-      const suggestionText = suggestionMatch[1].trim();
+
+    if (suggestionBlockMatch) {
+      const suggestionText = suggestionBlockMatch[1].trim();
       const suggestionLines = suggestionText
         .split("\n")
         .map((line) => line.trim())
         .filter((line) => line.match(/^\d+\./))
         .map((line) => line.replace(/^\d+\.\s*/, ""))
-        .filter((line) => line.length > 0);
+        .filter((line) => line.length > 5); // Filter out very short suggestions
 
-      suggestions = suggestionLines.slice(0, 2); // Take only first 2 suggestions
+      suggestions = suggestionLines.slice(0, 2);
+
+      // Remove the entire suggestion block from main content
       mainContent = generatedText
-        .replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/, "")
+        .replace(/\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/i, "")
         .trim();
+    } else {
+      // Fallback: Look for numbered list at the end that could be suggestions
+      const lines = generatedText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0);
+      const lastFiveLines = lines.slice(-5);
+
+      // Look for consecutive numbered items that seem like questions
+      const numberedQuestions = lastFiveLines.filter(
+        (line) =>
+          line.match(/^\d+\./) &&
+          line.length > 15 &&
+          (line.includes("?") ||
+            line.toLowerCase().includes("how") ||
+            line.toLowerCase().includes("what") ||
+            line.toLowerCase().includes("why") ||
+            line.toLowerCase().includes("can you"))
+      );
+
+      if (numberedQuestions.length >= 2) {
+        suggestions = numberedQuestions
+          .slice(0, 2)
+          .map((line) => line.replace(/^\d+\.\s*/, "").trim());
+
+        // Remove these suggestion lines from main content
+        let contentLines = lines;
+        numberedQuestions.forEach((suggLine) => {
+          const index = contentLines.findIndex(
+            (line) => line.trim() === suggLine.trim()
+          );
+          if (index !== -1) {
+            contentLines.splice(index, 1);
+          }
+        });
+        mainContent = contentLines.join("\n").trim();
+      }
+    }
+
+    // Final validation - ensure suggestions are meaningful
+    suggestions = suggestions.filter(
+      (suggestion) =>
+        suggestion.length > 10 &&
+        !suggestion.toLowerCase().includes("tell me more about") &&
+        !suggestion.toLowerCase().includes("what else would you like")
+    ); // Basic logging for debugging
+    console.log(
+      `Processing chat request. Messages: ${chatHistoryForGemini.length}`
+    );
+    if (suggestions.length > 0) {
+      console.log(`Generated ${suggestions.length} suggestions`);
     } // Return the response
     return NextResponse.json({
       message: {
@@ -262,8 +288,7 @@ export async function POST(req: NextRequest) {
         content: mainContent,
       },
       suggestions: suggestions,
-      model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0], // Dynamically set model name
-      rawResponse: JSON.stringify(geminiResponse),
+      model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0],
     });
   } catch (error) {
     console.error("Gemini API error:", error);
