@@ -237,7 +237,7 @@ export async function POST(req: NextRequest) {
         content: generatedText,
       },
       model: "gemini-1.5-flash-latest",
-      rawResponse: JSON.stringify(geminiResponse).substring(0, 500),
+      rawResponse: JSON.stringify(geminiResponse), // Removed substring
     });
   } catch (error) {
     console.error("Gemini API error:", error);

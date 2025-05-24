@@ -307,8 +307,8 @@ export default function GeminiChatPage() {
         </Button>
 
         {showDebug && debugInfo && (
-          <div className="mt-2 p-3 bg-muted rounded-md overflow-auto max-h-[200px] text-xs">
-            <pre>{debugInfo}</pre>
+          <div className="mt-2 p-3 bg-muted rounded-md overflow-auto text-xs">
+            <pre className="whitespace-pre-wrap break-all">{debugInfo}</pre>
           </div>
         )}
       </div>
