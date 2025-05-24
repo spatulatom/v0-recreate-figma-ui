@@ -73,15 +73,19 @@ export async function POST(req: NextRequest) {
     let systemInstruction: GeminiContent | undefined = undefined;
     const chatHistoryForGemini: GeminiContent[] = [];
 
-    let messagesForHistoryProcessing = messages;
-
-    // Handle system message for systemInstruction
+    let messagesForHistoryProcessing = messages; // Handle system message for systemInstruction
     if (messages[0]?.role === "system") {
       const originalSystemContent = messages[0].content;
       const lengthConstraint =
         "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
+      const suggestionInstruction =
+        "\n\nAfter your response, provide exactly 2 follow-up question suggestions that the user might want to ask next. Format them as:\n[SUGGESTIONS]\n1. First suggestion\n2. Second suggestion\n[/SUGGESTIONS]";
       systemInstruction = {
-        parts: [{ text: `${originalSystemContent}\\n\\n${lengthConstraint}` }],
+        parts: [
+          {
+            text: `${originalSystemContent}\n\n${lengthConstraint}${suggestionInstruction}`,
+          },
+        ],
       };
       // Remove system message from history to be processed for turns
       messagesForHistoryProcessing = messages.slice(1);
@@ -89,8 +93,10 @@ export async function POST(req: NextRequest) {
       // If no system message from client, create one with the length constraint
       const lengthConstraint =
         "Keep your response concise, ideally no more than five sentences. It can be shorter if appropriate.";
+      const suggestionInstruction =
+        "\n\nAfter your response, provide exactly 2 follow-up question suggestions that the user might want to ask next. Format them as:\n[SUGGESTIONS]\n1. First suggestion\n2. Second suggestion\n[/SUGGESTIONS]";
       systemInstruction = {
-        parts: [{ text: lengthConstraint }],
+        parts: [{ text: `${lengthConstraint}${suggestionInstruction}` }],
       };
       // No need to slice messagesForHistoryProcessing as there was no system message at index 0
     }
@@ -220,7 +226,6 @@ export async function POST(req: NextRequest) {
           .trim();
       }
     }
-
     if (!generatedText) {
       console.error(
         "Failed to extract text from Gemini response:",
@@ -230,12 +235,33 @@ export async function POST(req: NextRequest) {
         "I processed your request but couldn't generate a proper response.";
     }
 
-    // Return the response
+    // Parse suggestions from the response
+    let suggestions: string[] = [];
+    let mainContent = generatedText;
+
+    const suggestionMatch = generatedText.match(
+      /\[SUGGESTIONS\]([\s\S]*?)\[\/SUGGESTIONS\]/
+    );
+    if (suggestionMatch) {
+      const suggestionText = suggestionMatch[1].trim();
+      const suggestionLines = suggestionText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.match(/^\d+\./))
+        .map((line) => line.replace(/^\d+\.\s*/, ""))
+        .filter((line) => line.length > 0);
+
+      suggestions = suggestionLines.slice(0, 2); // Take only first 2 suggestions
+      mainContent = generatedText
+        .replace(/\[SUGGESTIONS\][\s\S]*?\[\/SUGGESTIONS\]/, "")
+        .trim();
+    } // Return the response
     return NextResponse.json({
       message: {
         role: "assistant",
-        content: generatedText,
+        content: mainContent,
       },
+      suggestions: suggestions,
       model: GEMINI_API_ENDPOINT.split("/models/")[1].split(":")[0], // Dynamically set model name
       rawResponse: JSON.stringify(geminiResponse),
     });

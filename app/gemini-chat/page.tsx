@@ -9,6 +9,7 @@ import { Loader2, Send, AlertCircle, Info } from "lucide-react";
 type Message = {
   role: "user" | "assistant" | "system";
   content: string;
+  suggestions?: string[];
 };
 
 export default function GeminiChatPage() {
@@ -27,6 +28,7 @@ export default function GeminiChatPage() {
   const [showDebug, setShowDebug] = useState(false);
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [currentModelName, setCurrentModelName] = useState<string | null>(null); // New state for model name
+  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]); // New state for suggested prompts
   const inputRef = useRef<HTMLInputElement>(null);
   const [shouldFocusInput, setShouldFocusInput] = useState(false); // Added state for focusing
   const messagesEndRef = useRef<HTMLDivElement>(null); // Ref for the messages container
@@ -114,7 +116,6 @@ export default function GeminiChatPage() {
       setShouldFocusInput(false);
     }
   }, [shouldFocusInput]);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -125,6 +126,108 @@ export default function GeminiChatPage() {
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
+    setSuggestedPrompts([]); // Clear suggestions when new message is sent
+    setIsLoading(true);
+    setError(null);
+    setDebugInfo(null);
+
+    try {
+      const response = await fetch("/api/gemini-chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      // Get response text first for better error handling
+      const responseText = await response.text();
+
+      // Try to parse as JSON
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error("Failed to parse response as JSON:", responseText);
+        throw new Error(
+          `Server returned invalid JSON. Response: ${responseText.substring(
+            0,
+            100
+          )}...`
+        );
+      }
+
+      // Check if response is ok
+      if (!response.ok) {
+        throw new Error(
+          data.details || data.error || `Server error: ${response.status}`
+        );
+      } // Add assistant response to chat
+      if (data.message) {
+        const assistantMessage = {
+          ...data.message,
+          suggestions: data.suggestions || [],
+        };
+        setMessages([...newMessages, assistantMessage]);
+        setSuggestedPrompts(data.suggestions || []);
+        setApiStatus("working");
+
+        if (data.model) {
+          setCurrentModelName(data.model);
+        }
+
+        // Store raw response for debugging
+        if (data.rawResponse) {
+          setDebugInfo(data.rawResponse);
+        }
+
+        // Log the response for debugging
+        console.log("Response from model:", data.model, data.message.content);
+      } else {
+        throw new Error("Response missing message data");
+      }
+    } catch (err) {
+      console.error("Chat error:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
+      setApiStatus("error");
+
+      // Add error message to chat for better UX
+      setMessages([
+        ...newMessages,
+        {
+          role: "assistant",
+          content: "Sorry, I encountered an error. Please try again later.",
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+      setShouldFocusInput(true); // Trigger focus via useEffect
+    }
+  }
+  function handleNewChat() {
+    setMessages([initialSystemMessage]);
+    setInput("");
+    setError(null);
+    setDebugInfo(null);
+    setSuggestedPrompts([]);
+    // Optionally, reset apiStatus if desired, or keep current model info
+    // setApiStatus("untested"); // Uncomment if you want to re-trigger API status check visual
+    // setCurrentModelName(null); // Uncomment if you want to clear model name on new chat
+    setShouldFocusInput(true);
+  }
+  async function handleSuggestionClick(suggestion: string) {
+    if (!suggestion.trim() || isLoading || apiStatus === "error") return;
+
+    // Add user message to the chat
+    const userMessage: Message = { role: "user", content: suggestion };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput("");
+    setSuggestedPrompts([]);
     setIsLoading(true);
     setError(null);
     setDebugInfo(null);
@@ -164,7 +267,12 @@ export default function GeminiChatPage() {
 
       // Add assistant response to chat
       if (data.message) {
-        setMessages([...newMessages, data.message]);
+        const assistantMessage = {
+          ...data.message,
+          suggestions: data.suggestions || [],
+        };
+        setMessages([...newMessages, assistantMessage]);
+        setSuggestedPrompts(data.suggestions || []);
         setApiStatus("working");
 
         if (data.model) {
@@ -202,17 +310,6 @@ export default function GeminiChatPage() {
       setIsLoading(false);
       setShouldFocusInput(true); // Trigger focus via useEffect
     }
-  }
-
-  function handleNewChat() {
-    setMessages([initialSystemMessage]);
-    setInput("");
-    setError(null);
-    setDebugInfo(null);
-    // Optionally, reset apiStatus if desired, or keep current model info
-    // setApiStatus("untested"); // Uncomment if you want to re-trigger API status check visual
-    // setCurrentModelName(null); // Uncomment if you want to clear model name on new chat
-    setShouldFocusInput(true);
   }
 
   return (
@@ -287,19 +384,47 @@ export default function GeminiChatPage() {
         ref={messagesEndRef} // Assign ref to the messages container
         className="bg-card border border-border rounded-lg p-4 mb-4 h-[400px] overflow-y-auto"
       >
+        {" "}
         {messages.slice(1).map((message, index) => (
-          <div
-            key={index}
-            className={`mb-4 p-3 rounded-lg ${
-              message.role === "user"
-                ? "bg-primary text-primary-foreground ml-auto max-w-[80%]"
-                : "bg-muted text-foreground max-w-[80%]"
-            }`}
-          >
-            <p>{message.content}</p>
+          <div key={index}>
+            <div
+              className={`mb-4 p-3 rounded-lg ${
+                message.role === "user"
+                  ? "bg-primary text-primary-foreground ml-auto max-w-[80%]"
+                  : "bg-muted text-foreground max-w-[80%]"
+              }`}
+            >
+              <p>{message.content}</p>
+            </div>
+
+            {/* Show suggestions only for the last assistant message and when not loading */}
+            {message.role === "assistant" &&
+              index === messages.slice(1).length - 1 &&
+              message.suggestions &&
+              message.suggestions.length > 0 &&
+              !isLoading && (
+                <div className="mb-4 max-w-[80%]">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Suggested prompts:
+                  </p>
+                  <div className="space-y-2">
+                    {message.suggestions.map((suggestion, suggestionIndex) => (
+                      <Button
+                        key={suggestionIndex}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className="w-full text-left justify-start h-auto p-3 text-sm"
+                        disabled={isLoading || apiStatus === "error"}
+                      >
+                        {suggestion}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
         ))}
-
         {isLoading && (
           <div className="flex items-center justify-center p-4">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
