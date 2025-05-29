@@ -17,7 +17,41 @@ export default function ProjectManagementLanding() {
           <p className="text-foreground mb-8 max-w-md">
             playground with various AI integrations.
           </p>
-      
+          <div className="text-foreground mb-8 max-w-md">
+            <p className="font-semibold mb-2">Learn more about performance:</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>
+                <a
+                  href="https://developer.chrome.com/docs/devtools/memory-problems"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-blue-500"
+                >
+                  Chrome DevTools: Memory Problems
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://web.dev/articles/rendering-performance"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-blue-500"
+                >
+                  Web.dev: Rendering Performance
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://developer.chrome.com/docs/devtools/performance/reference"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-blue-500"
+                >
+                  Chrome DevTools: Performance Reference
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="relative z-10">
@@ -45,8 +79,6 @@ export default function ProjectManagementLanding() {
 
       {/* Features Section */}
       <FeaturesSection />
-
-     
     </div>
   );
 }

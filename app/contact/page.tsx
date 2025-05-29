@@ -105,20 +105,21 @@ export default function ContactPage() {
         </div>
 
         <div>
-          <form className="bg-card p-8 rounded-lg shadow-md border border-border">
+          <form action='./otherpage' className="bg-card p-8 rounded-lg shadow-md border border-border">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <label htmlFor="first-name" className="block text-sm font-medium text-gray-700 mb-1">
                   First Name
                 </label>
                 <input
+                name="first-name"
                   type="text"
                   id="first-name"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4f9cf9] focus:border-transparent"
                   placeholder="John"
                 />
               </div>
-              <div>
+              {/* <div>
                 <label htmlFor="last-name" className="block text-sm font-medium text-gray-700 mb-1">
                   Last Name
                 </label>
@@ -164,7 +165,7 @@ export default function ContactPage() {
                 rows={5}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4f9cf9] focus:border-transparent"
                 placeholder="Tell us more about your inquiry..."
-              ></textarea>
+              ></textarea> */}
             </div>
 
             <button
