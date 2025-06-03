@@ -6,13 +6,12 @@ const HF_INFERENCE_API = "https://api-inference.huggingface.co/models/";
 // Using models that are more reliable and commonly available on Hugging Face
 // Updated with models that are actively maintained and served on the inference API
 const MODELS = [
-  // "facebook/bart-large-cnn", // Commented out as responses were "funny"
-  "bigscience/bloom-560m", // Smaller BLOOM model, good for text generation
-  "EleutherAI/gpt-neo-125m", // Smaller GPT-Neo model, good for general text generation
-  "microsoft/DialoGPT-medium", // Good for conversational responses
-  // "google/flan-t5-small", // Versatile model good for various text tasks
-  "sshleifer/distilbart-cnn-12-6", // Good for summarization, alternative to BART
-  "deepset/roberta-base-squad2", // Good for question answering
+  // Most reliably available models for Hugging Face Inference API
+  "gpt2", // Text generation
+  "distilgpt2", // Smaller, fast text generation
+  "distilbert-base-uncased", // Embeddings/classification
+  "bert-base-uncased", // Embeddings/classification
+  "sshleifer/distilbart-cnn-12-6", // Summarization
 ];
 
 export async function POST(req: NextRequest) {
