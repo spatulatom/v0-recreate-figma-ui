@@ -22,16 +22,6 @@ export default function ProjectManagementLanding() {
             <ul className="list-disc list-inside space-y-1">
               <li>
                 <a
-                  href="https://developer.chrome.com/docs/devtools/memory-problems"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline text-blue-500"
-                >
-                  Chrome DevTools: Memory Problems
-                </a>
-              </li>
-              <li>
-                <a
                   href="https://web.dev/articles/rendering-performance"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -40,6 +30,18 @@ export default function ProjectManagementLanding() {
                   Web.dev: Rendering Performance
                 </a>
               </li>
+
+            <li>
+              <a
+                href="https://web.dev/articles/input-events"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline text-blue-500"
+              >
+                Web.dev: Interaction to Next Paint (INP)
+              </a>
+            </li>
+
               <li>
                 <a
                   href="https://developer.chrome.com/docs/devtools/performance/reference"
@@ -57,7 +59,18 @@ export default function ProjectManagementLanding() {
                   rel="noopener noreferrer"
                   className="hover:underline text-blue-500"
                 >
-                  Anaylyze runtime performance with Chrome DevTools - jank animations 
+                  Chrome DevTools: Anaylyze runtime performance with Chrome DevTools - jank
+                  animations
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://developer.chrome.com/docs/devtools/memory-problems"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-blue-500"
+                >
+                  Chrome DevTools: Memory Problems
                 </a>
               </li>
             </ul>
