@@ -50,6 +50,16 @@ export default function ProjectManagementLanding() {
                   Chrome DevTools: Performance Reference
                 </a>
               </li>
+              <li>
+                <a
+                  href="https://developer.chrome.com/docs/devtools/performance"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline text-blue-500"
+                >
+                  Anaylyze runtime performance with Chrome DevTools - jank animations 
+                </a>
+              </li>
             </ul>
           </div>
         </div>
