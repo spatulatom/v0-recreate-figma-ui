@@ -31,7 +31,9 @@ export default function RootLayout({
                   var storageKey = 'whitepace-theme';
                   var classNameDark = 'dark';
                   var storedTheme = localStorage.getItem(storageKey);
-                  var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if(!storedTheme) {
+                    var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  }
 
                   // Determine if dark class should be applied
                   if (storedTheme === 'dark' || (systemPrefersDark && (storedTheme === 'system' || !storedTheme))) {
